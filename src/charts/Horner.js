@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState, useEffect, useMemo } from 'react'
 import { Result } from '../components'
 import { useInputContext } from '../context/input_context'
 import styled from 'styled-components'

@@ -1,11 +1,8 @@
-import { useRef, useState, useEffect } from 'react'
-import { Result } from '../components'
+import { useRef, useEffect } from 'react'
 import { useInputContext } from '../context/input_context'
 import styled from 'styled-components'
 import { Chart, registerables } from 'chart.js'
 import annotationPlugin from 'chartjs-plugin-annotation'
-import { getRelativePosition } from 'chart.js/helpers'
-import regression from 'regression'
 
 Chart.register(...registerables, annotationPlugin)
 
