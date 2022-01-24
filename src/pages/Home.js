@@ -52,7 +52,7 @@ const Home = () => {
 const HomeWrapper = styled.div`
   height: 100vh;
   display: grid;
-  grid-template-columns: 350px 600px auto;
+  grid-template-columns: 350px 600px 700px;
 
   -webkit-user-select: none; /* Safari */
   -ms-user-select: none; /* IE 10 and IE 11 */
@@ -63,7 +63,7 @@ const HomeWrapper = styled.div`
     grid-auto-flow: row;
     grid-auto-rows: min-content;
     grid-row-gap: 1.5rem;
-    padding: 30px 10px;
+    padding: 10px 10px;
     // grid-gap: 2rem;
   }
 
