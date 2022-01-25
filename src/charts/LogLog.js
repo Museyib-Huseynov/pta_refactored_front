@@ -1,36 +1,38 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { useInputContext } from '../context/input_context'
 import styled from 'styled-components'
 import { Chart, registerables } from 'chart.js'
 import annotationPlugin from 'chartjs-plugin-annotation'
-import { shapeSimilarity } from 'curve-matcher'
-import {
-  bourdet1,
-  bourdet2,
-  bourdet3,
-  bourdet4,
-  bourdet5,
-  bourdet6,
-  bourdet7,
-  bourdet8,
-  bourdet9,
-  gringarten1,
-  gringarten2,
-  gringarten3,
-  gringarten4,
-  gringarten5,
-  gringarten6,
-  gringarten7,
-  gringarten8,
-  gringarten9,
-} from '../gringarten-bourdet'
+import { getRelativePosition } from 'chart.js/helpers'
 
 Chart.register(...registerables, annotationPlugin)
 
 function LogLog() {
+  const [IARF, setIARF] = useState(true)
+  const [WBS, setWBS] = useState(false)
+  const [timeIAFR, setTimeIAFR] = useState(0)
+  const [pressureChangeIARF, setPressureChangeIARF] = useState(0)
+  const [pressureDerivativeIARF, setPressureDerivativeIARF] = useState(0)
+
   const chartRef = useRef(null)
   const { importedData } = useInputContext()
 
+  const handleIARF = () => {
+    setIARF(!IARF)
+    if (WBS) {
+      setWBS(false)
+    }
+  }
+
+  const handleWBS = () => {
+    setWBS(!WBS)
+    if (IARF) {
+      setIARF(false)
+    }
+  }
+  ///////////////////////////////////////////////////
+  //find pressureChange and derivative
+  //////////////////////////////////////////////////
   const time = importedData.map((item) => item[0])
   const pressure = importedData.map((item) => item[1])
   const pressureChange = pressure.map((item) => item - pressure[0])
@@ -53,47 +55,7 @@ function LogLog() {
       return [Math.log10(item), Math.log10(derivativePressure[index])]
     })
     .slice(1, -1)
-
-  const curve_pressureChangeData = pressureChangeData.map((item) => {
-    return { x: item[0], y: item[1] }
-  })
-
-  const curve_derivativePressureData = derivativePressureData.map((item) => {
-    return { x: item[0], y: item[1] }
-  })
-
-  const gringarten_array = [
-    gringarten1,
-    gringarten2,
-    gringarten3,
-    gringarten4,
-    gringarten5,
-    gringarten6,
-    gringarten7,
-    gringarten8,
-    gringarten9,
-  ]
-  const bourdet_array = [
-    bourdet1,
-    bourdet2,
-    bourdet3,
-    bourdet4,
-    bourdet5,
-    bourdet6,
-    bourdet7,
-    bourdet8,
-    bourdet9,
-  ]
-
-  const similarity_gringarten = gringarten_array.map((item) => {
-    return shapeSimilarity(curve_pressureChangeData, item)
-  })
-  const similarity_bourdet = bourdet_array.map((item) => {
-    return shapeSimilarity(curve_derivativePressureData, item)
-  })
-
-  console.log('gringarten', similarity_gringarten)
-  console.log('bourdet', similarity_bourdet)
+  ///////////////////////////////////////////////////////////////////////
 
   useEffect(() => {
     const myChart = new Chart(chartRef.current, {
@@ -144,6 +106,50 @@ function LogLog() {
             // enabled: false,
           },
         },
+        onClick: (e) => {
+          if (IARF) {
+            const canvasPosition = getRelativePosition(e, myChart)
+            const dataX = myChart.scales.x.getValueForPixel(canvasPosition.x)
+            const dataY = myChart.scales.y.getValueForPixel(canvasPosition.y)
+
+            const timeForIARF = derivativePressureData.filter(
+              (item) => item[0] >= dataX
+            )[0][0]
+            const pressureChangeForIARF = pressureChangeData.find(
+              (item) => item[0] === timeForIARF
+            )[1]
+            const pressureDerivativeForIARF = derivativePressureData.find(
+              (item) => item[0] === timeForIARF
+            )[1]
+
+            setTimeIAFR(timeForIARF)
+            setPressureChangeIARF(pressureChangeForIARF)
+            setPressureDerivativeIARF(pressureDerivativeForIARF)
+
+            myChart.options.plugins.annotation.annotations = {
+              line1: {
+                type: 'line',
+                xMin: dataX - 1,
+                xMax: dataX + 1,
+                yMin: dataY,
+                yMax: dataY,
+                borderColor: 'black',
+                borderWidth: 2,
+                label: {
+                  enabled: true,
+                  content: 'IARF',
+                  backgroundColor: 'transparent',
+                  color: 'black',
+                  padding: 10,
+                  // xAdjust: -150,
+                  yAdjust: -20,
+                  font: { style: 'bold', size: 18 },
+                },
+              },
+            }
+            myChart.update()
+          }
+        },
       },
       ////////////////////////////////////////
     })
@@ -153,14 +159,86 @@ function LogLog() {
   return (
     <LogLogWrapper>
       <canvas ref={chartRef} style={{ cursor: 'crosshair' }}></canvas>
+      <div>
+        <button
+          type='button'
+          onClick={handleIARF}
+          className={IARF ? 'active' : null}
+        >
+          Draw IARF line
+        </button>
+        <button
+          type='button'
+          onClick={handleWBS}
+          className={WBS ? 'active' : null}
+        >
+          Draw WBS line
+        </button>
+      </div>
     </LogLogWrapper>
   )
 }
 
 const LogLogWrapper = styled.div`
   display: grid;
+  grid-auto-rows: min-content;
   place-items: center;
   grid-row-gap: 2rem;
+  margin-top: 2rem;
+
+  button {
+    padding: 0.8rem;
+    margin: 0 1rem;
+    border: 1px solid #000;
+    cursor: pointer;
+  }
+
+  .active {
+    background: green;
+    color: #fff;
+  }
 `
 
 export default LogLog
+
+// import { shapeSimilarity } from 'curve-matcher'
+// import {
+//   gringarten_arr,
+//   bourdet_arr,
+//   dimensionlessGroupArray,
+// } from '../gringarten-bourdet'
+
+////////////////////////////////////////////////////////////////
+//check similarity with gringarten-bourdet type curves and determine dimensionless group
+////////////////////////////////////////////////////////////////
+// const curve_pressureChangeData = pressureChangeData.map((item) => {
+//   return { x: item[0], y: item[1] }
+// })
+
+// const curve_derivativePressureData = derivativePressureData.map((item) => {
+//   return { x: item[0], y: item[1] }
+// })
+
+// const similarity_gringarten = gringarten_arr.map((item) => {
+//   return shapeSimilarity(curve_pressureChangeData, item)
+// })
+// const similarity_bourdet = bourdet_arr.map((item) => {
+//   return shapeSimilarity(curve_derivativePressureData, item)
+// })
+
+// const sum_similarities = similarity_gringarten.map(
+//   (item, index) => item + similarity_bourdet[index]
+// )
+
+// const indexOfMaxSimilarity = sum_similarities.indexOf(
+//   Math.max(...sum_similarities)
+// )
+
+// const dimensionlessGroup = dimensionlessGroupArray[indexOfMaxSimilarity]
+
+// console.log('gringarten', similarity_gringarten)
+// console.log('bourdet', similarity_bourdet)
+// console.log(sum_similarities)
+// console.log(indexOfMaxSimilarity)
+// console.log(dimensionlessGroup)
+/////////////////////////////////////////////////////////////////
