@@ -8,27 +8,219 @@ import { getRelativePosition } from 'chart.js/helpers'
 Chart.register(...registerables, annotationPlugin)
 
 function LogLog() {
-  const [IARF, setIARF] = useState(true)
+  const [IARF, setIARF] = useState(false)
   const [WBS, setWBS] = useState(false)
   const [timeIAFR, setTimeIAFR] = useState(0)
   const [pressureChangeIARF, setPressureChangeIARF] = useState(0)
   const [pressureDerivativeIARF, setPressureDerivativeIARF] = useState(0)
+  const [timeWBS, setTimeWBS] = useState(0)
+  const [pressureWBS, setPressureWBS] = useState(0)
+
+  const [annotationIARF, setAnnotationIARF] = useState([])
+  const [annotationWBS, setAnnotationWBS] = useState([])
 
   const chartRef = useRef(null)
   const { importedData } = useInputContext()
-
+  ///////////////////////////////////////////////////////
+  // handle IARF
+  ////////////////////////////////////////////////////////
   const handleIARF = () => {
     setIARF(!IARF)
     if (WBS) {
       setWBS(false)
     }
-  }
+    let chart = Chart.getChart('canvasID')
+    if (IARF) {
+      chart.options.onClick = null
+    } else {
+      chart.options.onClick = function (e) {
+        const canvasPosition = getRelativePosition(e, chart)
+        const dataX = chart.scales.x.getValueForPixel(canvasPosition.x)
+        const dataY = chart.scales.y.getValueForPixel(canvasPosition.y)
 
+        const timeForIARF = derivativePressureData.filter(
+          (item) => item[0] >= dataX
+        )[0][0]
+        const pressureChangeForIARF = pressureChangeData.find(
+          (item) => item[0] === timeForIARF
+        )[1]
+        const pressureDerivativeForIARF = derivativePressureData.find(
+          (item) => item[0] === timeForIARF
+        )[1]
+
+        setTimeIAFR(timeForIARF)
+        setPressureChangeIARF(pressureChangeForIARF)
+        setPressureDerivativeIARF(pressureDerivativeForIARF)
+
+        setAnnotationIARF([dataX - 0.8, dataX + 0.8, dataY, dataY])
+
+        if (annotationWBS.length === 0) {
+          chart.options.plugins.annotation.annotations = {
+            IARF: {
+              type: 'line',
+              xMin: dataX - 0.8,
+              xMax: dataX + 0.8,
+              yMin: dataY,
+              yMax: dataY,
+              borderColor: 'black',
+              borderWidth: 2,
+              label: {
+                enabled: true,
+                content: 'IARF',
+                backgroundColor: 'transparent',
+                color: 'black',
+                padding: 10,
+                // xAdjust: -150,
+                yAdjust: -20,
+                font: { style: 'bold', size: 18 },
+              },
+            },
+          }
+        } else {
+          chart.options.plugins.annotation.annotations = {
+            IARF: {
+              type: 'line',
+              xMin: dataX - 0.8,
+              xMax: dataX + 0.8,
+              yMin: dataY,
+              yMax: dataY,
+              borderColor: 'black',
+              borderWidth: 2,
+              label: {
+                enabled: true,
+                content: 'IARF',
+                backgroundColor: 'transparent',
+                color: 'black',
+                padding: 10,
+                // xAdjust: -150,
+                yAdjust: -20,
+                font: { style: 'bold', size: 18 },
+              },
+            },
+            WBS: {
+              type: 'line',
+              xMin: annotationWBS[0],
+              xMax: annotationWBS[1],
+              yMin: annotationWBS[2],
+              yMax: annotationWBS[3],
+              borderColor: 'black',
+              borderWidth: 2,
+              label: {
+                enabled: true,
+                content: 'WBS',
+                backgroundColor: 'transparent',
+                color: 'black',
+                padding: 10,
+                xAdjust: -20,
+                yAdjust: -20,
+                font: { style: 'bold', size: 18 },
+              },
+            },
+          }
+        }
+        chart.update()
+      }
+    }
+    chart.update()
+  }
+  ////////////////////////////////////////////////////////
+  // handle WBS
+  ///////////////////////////////////////////////////////
   const handleWBS = () => {
     setWBS(!WBS)
     if (IARF) {
       setIARF(false)
     }
+    let chart = Chart.getChart('canvasID')
+    if (WBS) {
+      chart.options.onClick = null
+    } else {
+      chart.options.onClick = function (e) {
+        const canvasPosition = getRelativePosition(e, chart)
+        const dataX = chart.scales.x.getValueForPixel(canvasPosition.x)
+        const dataY = chart.scales.y.getValueForPixel(canvasPosition.y)
+        const b = dataY - dataX
+
+        setTimeWBS(dataX)
+        setPressureWBS(dataY)
+
+        setAnnotationWBS([
+          dataX - 0.6,
+          dataX + 0.6,
+          dataX - 0.6 + b,
+          dataX + 0.6 + b,
+        ])
+
+        if (annotationIARF.length === 0) {
+          chart.options.plugins.annotation.annotations = {
+            IARF: chart.options.plugins.annotation.annotations['IARF'],
+            WBS: {
+              type: 'line',
+              xMin: dataX - 0.6,
+              xMax: dataX + 0.6,
+              yMin: dataX - 0.6 + b,
+              yMax: dataX + 0.6 + b,
+              borderColor: 'black',
+              borderWidth: 2,
+              label: {
+                enabled: true,
+                content: 'WBS',
+                backgroundColor: 'transparent',
+                color: 'black',
+                padding: 10,
+                xAdjust: -20,
+                yAdjust: -20,
+                font: { style: 'bold', size: 18 },
+              },
+            },
+          }
+        } else {
+          chart.options.plugins.annotation.annotations = {
+            IARF: chart.options.plugins.annotation.annotations['IARF'],
+            WBS: {
+              type: 'line',
+              xMin: dataX - 0.6,
+              xMax: dataX + 0.6,
+              yMin: dataX - 0.6 + b,
+              yMax: dataX + 0.6 + b,
+              borderColor: 'black',
+              borderWidth: 2,
+              label: {
+                enabled: true,
+                content: 'WBS',
+                backgroundColor: 'transparent',
+                color: 'black',
+                padding: 10,
+                xAdjust: -20,
+                yAdjust: -20,
+                font: { style: 'bold', size: 18 },
+              },
+            },
+            IARF: {
+              type: 'line',
+              xMin: annotationIARF[0],
+              xMax: annotationIARF[1],
+              yMin: annotationIARF[2],
+              yMax: annotationIARF[3],
+              borderColor: 'black',
+              borderWidth: 2,
+              label: {
+                enabled: true,
+                content: 'IARF',
+                backgroundColor: 'transparent',
+                color: 'black',
+                padding: 10,
+                // xAdjust: -150,
+                yAdjust: -20,
+                font: { style: 'bold', size: 18 },
+              },
+            },
+          }
+        }
+        chart.update()
+      }
+    }
+    chart.update()
   }
   ///////////////////////////////////////////////////
   //find pressureChange and derivative
@@ -56,7 +248,7 @@ function LogLog() {
     })
     .slice(1, -1)
   ///////////////////////////////////////////////////////////////////////
-
+  ///////////////////////////////////////////////////////////////////////
   useEffect(() => {
     const myChart = new Chart(chartRef.current, {
       type: 'scatter',
@@ -106,50 +298,6 @@ function LogLog() {
             // enabled: false,
           },
         },
-        onClick: (e) => {
-          if (IARF) {
-            const canvasPosition = getRelativePosition(e, myChart)
-            const dataX = myChart.scales.x.getValueForPixel(canvasPosition.x)
-            const dataY = myChart.scales.y.getValueForPixel(canvasPosition.y)
-
-            const timeForIARF = derivativePressureData.filter(
-              (item) => item[0] >= dataX
-            )[0][0]
-            const pressureChangeForIARF = pressureChangeData.find(
-              (item) => item[0] === timeForIARF
-            )[1]
-            const pressureDerivativeForIARF = derivativePressureData.find(
-              (item) => item[0] === timeForIARF
-            )[1]
-
-            setTimeIAFR(timeForIARF)
-            setPressureChangeIARF(pressureChangeForIARF)
-            setPressureDerivativeIARF(pressureDerivativeForIARF)
-
-            myChart.options.plugins.annotation.annotations = {
-              line1: {
-                type: 'line',
-                xMin: dataX - 1,
-                xMax: dataX + 1,
-                yMin: dataY,
-                yMax: dataY,
-                borderColor: 'black',
-                borderWidth: 2,
-                label: {
-                  enabled: true,
-                  content: 'IARF',
-                  backgroundColor: 'transparent',
-                  color: 'black',
-                  padding: 10,
-                  // xAdjust: -150,
-                  yAdjust: -20,
-                  font: { style: 'bold', size: 18 },
-                },
-              },
-            }
-            myChart.update()
-          }
-        },
       },
       ////////////////////////////////////////
     })
@@ -158,7 +306,11 @@ function LogLog() {
 
   return (
     <LogLogWrapper>
-      <canvas ref={chartRef} style={{ cursor: 'crosshair' }}></canvas>
+      <canvas
+        id='canvasID'
+        ref={chartRef}
+        style={{ cursor: 'crosshair' }}
+      ></canvas>
       <div>
         <button
           type='button'
