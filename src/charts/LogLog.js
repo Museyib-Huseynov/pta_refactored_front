@@ -22,14 +22,6 @@ function LogLog() {
 
   const chartRef = useRef(null)
   const { importedData } = useInputContext()
-
-  const LogLogObject = {
-    timeIARF,
-    pressureChangeIARF,
-    pressureDerivativeIARF,
-    timeWBS,
-    pressureWBS,
-  }
   ///////////////////////////////////////////////////////
   // handle IARF
   ////////////////////////////////////////////////////////
@@ -162,7 +154,6 @@ function LogLog() {
 
         if (annotationIARF.length === 0) {
           chart.options.plugins.annotation.annotations = {
-            IARF: chart.options.plugins.annotation.annotations['IARF'],
             WBS: {
               type: 'line',
               xMin: dataX - 0.6,
@@ -185,26 +176,6 @@ function LogLog() {
           }
         } else {
           chart.options.plugins.annotation.annotations = {
-            IARF: chart.options.plugins.annotation.annotations['IARF'],
-            WBS: {
-              type: 'line',
-              xMin: dataX - 0.6,
-              xMax: dataX + 0.6,
-              yMin: dataX - 0.6 + b,
-              yMax: dataX + 0.6 + b,
-              borderColor: 'black',
-              borderWidth: 2,
-              label: {
-                enabled: true,
-                content: 'WBS',
-                backgroundColor: 'transparent',
-                color: 'black',
-                padding: 10,
-                xAdjust: -20,
-                yAdjust: -20,
-                font: { style: 'bold', size: 18 },
-              },
-            },
             IARF: {
               type: 'line',
               xMin: annotationIARF[0],
@@ -220,6 +191,25 @@ function LogLog() {
                 color: 'black',
                 padding: 10,
                 // xAdjust: -150,
+                yAdjust: -20,
+                font: { style: 'bold', size: 18 },
+              },
+            },
+            WBS: {
+              type: 'line',
+              xMin: dataX - 0.6,
+              xMax: dataX + 0.6,
+              yMin: dataX - 0.6 + b,
+              yMax: dataX + 0.6 + b,
+              borderColor: 'black',
+              borderWidth: 2,
+              label: {
+                enabled: true,
+                content: 'WBS',
+                backgroundColor: 'transparent',
+                color: 'black',
+                padding: 10,
+                xAdjust: -20,
                 yAdjust: -20,
                 font: { style: 'bold', size: 18 },
               },
@@ -311,6 +301,7 @@ function LogLog() {
       ////////////////////////////////////////
     })
     return () => myChart.destroy()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [importedData])
 
   return (

@@ -108,6 +108,7 @@ function MDH() {
       ////////////////////////////////////////
     })
     return () => myChart.destroy()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [importedData])
 
   return (
