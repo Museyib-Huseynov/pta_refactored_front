@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from 'react'
-import { Result } from '../components'
+import { ResultSemilog } from '../components'
 import { useInputContext } from '../context/input_context'
 import styled from 'styled-components'
 import { Chart, registerables } from 'chart.js'
@@ -113,7 +113,7 @@ function MDH() {
   return (
     <MDHWrapper>
       <canvas ref={chartRef} style={{ cursor: 'crosshair' }}></canvas>
-      <Result type='MDH method' regressionLine={regressionLine} />
+      <ResultSemilog type='MDH method' regressionLine={regressionLine} />
     </MDHWrapper>
   )
 }
@@ -121,7 +121,7 @@ function MDH() {
 const MDHWrapper = styled.div`
   display: grid;
   place-items: center;
-  grid-row-gap: 2rem;
+  grid-row-gap: 1rem;
 `
 
 export default MDH

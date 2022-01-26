@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect } from 'react'
+import { ResultLoglog } from '../components'
 import { useInputContext } from '../context/input_context'
 import styled from 'styled-components'
 import { Chart, registerables } from 'chart.js'
@@ -10,17 +11,25 @@ Chart.register(...registerables, annotationPlugin)
 function LogLog() {
   const [IARF, setIARF] = useState(false)
   const [WBS, setWBS] = useState(false)
-  const [timeIAFR, setTimeIAFR] = useState(0)
-  const [pressureChangeIARF, setPressureChangeIARF] = useState(0)
-  const [pressureDerivativeIARF, setPressureDerivativeIARF] = useState(0)
-  const [timeWBS, setTimeWBS] = useState(0)
-  const [pressureWBS, setPressureWBS] = useState(0)
+  const [timeIARF, setTimeIARF] = useState('')
+  const [pressureChangeIARF, setPressureChangeIARF] = useState('')
+  const [pressureDerivativeIARF, setPressureDerivativeIARF] = useState('')
+  const [timeWBS, setTimeWBS] = useState('')
+  const [pressureWBS, setPressureWBS] = useState('')
 
   const [annotationIARF, setAnnotationIARF] = useState([])
   const [annotationWBS, setAnnotationWBS] = useState([])
 
   const chartRef = useRef(null)
   const { importedData } = useInputContext()
+
+  const LogLogObject = {
+    timeIARF,
+    pressureChangeIARF,
+    pressureDerivativeIARF,
+    timeWBS,
+    pressureWBS,
+  }
   ///////////////////////////////////////////////////////
   // handle IARF
   ////////////////////////////////////////////////////////
@@ -48,7 +57,7 @@ function LogLog() {
           (item) => item[0] === timeForIARF
         )[1]
 
-        setTimeIAFR(timeForIARF)
+        setTimeIARF(timeForIARF)
         setPressureChangeIARF(pressureChangeForIARF)
         setPressureDerivativeIARF(pressureDerivativeForIARF)
 
@@ -311,7 +320,7 @@ function LogLog() {
         ref={chartRef}
         style={{ cursor: 'crosshair' }}
       ></canvas>
-      <div>
+      <div className='drawButtons'>
         <button
           type='button'
           onClick={handleIARF}
@@ -327,6 +336,14 @@ function LogLog() {
           Draw WBS line
         </button>
       </div>
+      <ResultLoglog
+        type='Log Log Diagnostic plot'
+        timeIARF={timeIARF}
+        pressureChangeIARF={pressureChangeIARF}
+        pressureDerivativeIARF={pressureDerivativeIARF}
+        timeWBS={timeWBS}
+        pressureWBS={pressureWBS}
+      />
     </LogLogWrapper>
   )
 }
@@ -334,9 +351,9 @@ function LogLog() {
 const LogLogWrapper = styled.div`
   display: grid;
   grid-auto-rows: min-content;
-  place-items: center;
+  place-content: center;
   grid-row-gap: 2rem;
-  margin-top: 2rem;
+  // margin-top: 2rem;
 
   button {
     padding: 0.8rem;
@@ -348,6 +365,10 @@ const LogLogWrapper = styled.div`
   .active {
     background: green;
     color: #fff;
+  }
+
+  .drawButtons {
+    place-self: center;
   }
 `
 

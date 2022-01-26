@@ -1,4 +1,5 @@
 export { default as Input } from './Input'
 export { default as InputElement } from './InputElement'
-export { default as Result } from './Result'
+export { default as ResultSemilog } from './ResultSemilog'
+export { default as ResultLoglog } from './ResultLoglog'
 export { default as IndexRouteElement } from './IndexRouteElement'

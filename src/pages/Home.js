@@ -62,8 +62,8 @@ const HomeWrapper = styled.div`
     display: grid;
     grid-auto-flow: row;
     grid-auto-rows: min-content;
-    grid-row-gap: 1.5rem;
-    padding: 10px 10px;
+    grid-row-gap: 1rem;
+    padding: 5px 10px;
     // grid-gap: 2rem;
   }
 

@@ -1,5 +1,5 @@
-import { useRef, useState, useEffect, useMemo } from 'react'
-import { Result } from '../components'
+import { useRef, useState, useEffect } from 'react'
+import { ResultSemilog } from '../components'
 import { useInputContext } from '../context/input_context'
 import styled from 'styled-components'
 import { Chart, registerables } from 'chart.js'
@@ -124,7 +124,7 @@ function Horner() {
   return (
     <HornerWrapper>
       <canvas ref={chartRef} style={{ cursor: 'crosshair' }}></canvas>
-      <Result type='Horner method' regressionLine={regressionLine} />
+      <ResultSemilog type='Horner method' regressionLine={regressionLine} />
     </HornerWrapper>
   )
 }
@@ -132,7 +132,7 @@ function Horner() {
 const HornerWrapper = styled.div`
   display: grid;
   place-items: center;
-  grid-row-gap: 2rem;
+  grid-row-gap: 1rem;
 `
 
 export default Horner

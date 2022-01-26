@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from 'react'
-import { Result } from '../components'
+import { ResultSemilog } from '../components'
 import { useInputContext } from '../context/input_context'
 import styled from 'styled-components'
 import { Chart, registerables } from 'chart.js'
@@ -120,7 +120,7 @@ function Agarwal() {
   return (
     <AgarwalWrapper>
       <canvas ref={chartRef} style={{ cursor: 'crosshair' }}></canvas>
-      <Result
+      <ResultSemilog
         type='Agarwal Equivalent-Time method'
         regressionLine={regressionLine}
       />
@@ -131,7 +131,7 @@ function Agarwal() {
 const AgarwalWrapper = styled.div`
   display: grid;
   place-items: center;
-  grid-row-gap: 2rem;
+  grid-row-gap: 1rem;
 `
 
 export default Agarwal

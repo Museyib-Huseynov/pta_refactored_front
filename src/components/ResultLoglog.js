@@ -2,7 +2,14 @@ import React from 'react'
 import styled from 'styled-components'
 import { useInputContext } from '../context/input_context'
 
-function Result({ type, regressionLine }) {
+function ResultLoglog({
+  type,
+  timeIARF,
+  pressureChangeIARF,
+  pressureDerivativeIARF,
+  timeWBS,
+  pressureWBS,
+}) {
   const {
     porosity,
     viscosity,
@@ -11,8 +18,6 @@ function Result({ type, regressionLine }) {
     fvf,
     effectiveThickness,
     rate,
-    productionTime,
-    importedData,
   } = useInputContext()
 
   const allInputsFilled =
@@ -22,66 +27,60 @@ function Result({ type, regressionLine }) {
     wellRadius !== '' &&
     fvf !== '' &&
     effectiveThickness !== '' &&
-    rate !== '' &&
-    productionTime !== ''
+    rate !== ''
 
   const inputEmptyWarning = (
     <p className='warning'>Please fill all input data</p>
   )
-  const regressionWarning = (
-    <p className='warning'>Please draw the regression line</p>
-  )
+  const IARFWarning = <p className='warning'>Please draw IARF line</p>
+  const WBSWarning = <p className='warning'>Please draw WBS line</p>
 
   const calcPerm = () => {
-    if (!regressionLine) return null
     if (!allInputsFilled) return null
-    const slope = Math.abs(regressionLine.equation[0])
+    if (!pressureDerivativeIARF) return null
     return (
-      (162.6 * rate * fvf * viscosity) /
-      (slope * effectiveThickness)
+      (70.6 * rate * fvf * viscosity) /
+      (effectiveThickness * Math.pow(10, pressureDerivativeIARF))
     ).toFixed(1)
   }
 
   const permeability = calcPerm()
 
   const calcSkin = () => {
-    if (!regressionLine) return null
     if (!allInputsFilled) return null
-    const slope = Math.abs(regressionLine.equation[0])
-    let pressureAtOneHour = 0
-    if (type === 'MDH method') {
-      pressureAtOneHour = regressionLine.predict(0)[1]
-    }
-    if (type === 'Horner method') {
-      pressureAtOneHour = regressionLine.predict(
-        Math.log10((productionTime + 1) / 1)
-      )[1]
-    }
-    if (type === 'Agarwal Equivalent-Time method') {
-      pressureAtOneHour = regressionLine.predict(
-        Math.log10((productionTime * 1) / (productionTime + 1))
-      )[1]
-    }
-    const flowingWellborePressure = importedData[0][1]
+    if (!pressureDerivativeIARF) return null
     return (
-      1.151 *
-      ((pressureAtOneHour - flowingWellborePressure) / slope -
-        Math.log10(
-          permeability /
-            (porosity *
+      0.5 *
+      (Math.pow(10, pressureChangeIARF) / Math.pow(10, pressureDerivativeIARF) -
+        Math.log(
+          (permeability * Math.pow(10, timeIARF)) /
+            (1688 *
+              porosity *
               viscosity *
               totalCompressibility *
               Math.pow(wellRadius, 2))
-        ) +
-        3.23)
+        ))
     ).toFixed(1)
   }
 
   const skin = calcSkin()
+
+  const calcWBS = () => {
+    if (!allInputsFilled) return null
+    if (!pressureWBS) return null
+    return (
+      (rate * fvf * Math.pow(10, timeWBS)) /
+      (24 * Math.pow(10, pressureWBS))
+    ).toFixed(5)
+  }
+
+  const WBS = calcWBS()
+
   return (
     <ResultWrapper>
       {!allInputsFilled ? inputEmptyWarning : null}
-      {!regressionLine ? regressionWarning : null}
+      {!timeIARF ? IARFWarning : null}
+      {!timeWBS ? WBSWarning : null}
       <table>
         <tbody>
           <tr>
@@ -95,6 +94,10 @@ function Result({ type, regressionLine }) {
             <td>Skin factor</td>
             <td>{skin}</td>
           </tr>
+          <tr>
+            <td>Wellbore Storage (bbl/psi)</td>
+            <td>{WBS}</td>
+          </tr>
         </tbody>
       </table>
     </ResultWrapper>
@@ -104,7 +107,6 @@ function Result({ type, regressionLine }) {
 const ResultWrapper = styled.div`
   display: grid;
   place-items: center;
-
   table,
   th,
   td {
@@ -112,25 +114,21 @@ const ResultWrapper = styled.div`
     text-align: center;
     padding: 10px;
   }
-
   table {
     border-collapse: collapse;
     width: 300px;
   }
-
   th {
     background: #c8c8c8;
     color: #000;
   }
-
   td:first-of-type {
     width: 200px;
   }
-
   .warning {
     color: red;
     margin-bottom: 0.5rem;
   }
 `
 
-export default Result
+export default ResultLoglog
