@@ -12,6 +12,8 @@ const initialState = {
   effectiveThickness: '',
   rate: '',
   productionTime: '',
+  shapeFactor: '',
+  area: '',
   importedData: [],
 }
 

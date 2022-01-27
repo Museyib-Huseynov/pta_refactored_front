@@ -56,11 +56,12 @@ function ResultLoglog({
           (permeability * Math.pow(10, timeIARF)) /
             (1688 *
               porosity *
+              0.01 *
               viscosity *
               totalCompressibility *
               Math.pow(wellRadius, 2))
         ))
-    ).toFixed(1)
+    ).toFixed(2)
   }
 
   const skin = calcSkin()

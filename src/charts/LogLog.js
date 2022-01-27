@@ -342,9 +342,9 @@ function LogLog() {
 const LogLogWrapper = styled.div`
   display: grid;
   grid-auto-rows: min-content;
-  place-content: center;
+  place-content: top;
   grid-row-gap: 2rem;
-  // margin-top: 2rem;
+  margin-top: 2rem;
 
   button {
     padding: 0.8rem;

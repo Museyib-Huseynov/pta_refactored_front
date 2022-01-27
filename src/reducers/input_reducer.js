@@ -23,6 +23,8 @@ const input_reducer = (state, action) => {
         effectiveThickness: 25,
         rate: 100,
         productionTime: 2160,
+        shapeFactor: 31.62,
+        area: 40,
         importedData: sampleData,
       }
     default:

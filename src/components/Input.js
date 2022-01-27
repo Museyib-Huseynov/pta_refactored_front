@@ -18,6 +18,11 @@ const Input = () => {
       <InputElement type='wellRadius' label='Well radius (ft)' />
       <InputElement type='rate' label='Flowing rate (STB/day)' />
       <InputElement type='productionTime' label='Production time (hour)' />
+      <InputElement
+        type='shapeFactor'
+        label={['Shape Factor (C', <sub>A</sub>, ')']}
+      />
+      <InputElement type='area' label='Area (acres)' />
       <label htmlFor='file' className='file'>
         Import Pressure data
       </label>

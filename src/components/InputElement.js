@@ -1,11 +1,18 @@
 import { useInputContext } from '../context/input_context'
 import styled from 'styled-components'
+import React from 'react'
 
 const InputElement = ({ type, label }) => {
   const { setInput, ...state } = useInputContext()
   return (
     <InputElementWrapper>
-      <label htmlFor={type}>{label}</label>
+      <label htmlFor={type}>
+        {typeof label === 'object'
+          ? label.map((item, index) => (
+              <React.Fragment key={index}>{item}</React.Fragment>
+            ))
+          : label}
+      </label>
       <input
         type='number'
         id={type}

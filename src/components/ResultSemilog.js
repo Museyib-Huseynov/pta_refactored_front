@@ -12,6 +12,8 @@ function ResultSemilog({ type, regressionLine }) {
     effectiveThickness,
     rate,
     productionTime,
+    shapeFactor,
+    area,
     importedData,
   } = useInputContext()
 
@@ -23,7 +25,9 @@ function ResultSemilog({ type, regressionLine }) {
     fvf !== '' &&
     effectiveThickness !== '' &&
     rate !== '' &&
-    productionTime !== ''
+    productionTime !== '' &&
+    shapeFactor !== '' &&
+    area !== ''
 
   const inputEmptyWarning = (
     <p className='warning'>Please fill all input data</p>
@@ -69,15 +73,36 @@ function ResultSemilog({ type, regressionLine }) {
         Math.log10(
           permeability /
             (porosity *
+              0.01 *
               viscosity *
               totalCompressibility *
               Math.pow(wellRadius, 2))
         ) +
         3.23)
-    ).toFixed(1)
+    ).toFixed(2)
   }
 
   const skin = calcSkin()
+  ///////////////////////////////////////////////////////////////////////////
+  // calculate false pressure when HTR=1 or log(HTR)=0
+  let falsePressure = ''
+  if (regressionLine) {
+    falsePressure = regressionLine.predict(0)[1]
+  }
+  ////////////////////////////////////////////////////////////////////////////
+  // calculate average pressure in Horner method using Ramey-Cobb Method
+  const HTRForAveragePressure =
+    (0.0002637 * permeability * shapeFactor * productionTime) /
+    (porosity * 0.01 * viscosity * totalCompressibility * area * 43560)
+  console.log('HTRForAveragePressure', HTRForAveragePressure)
+  let averagePressure = ''
+  if (regressionLine) {
+    averagePressure = regressionLine.predict(
+      Math.log10(HTRForAveragePressure)
+    )[1]
+  }
+  console.log('averagePressure', averagePressure)
+  ////////////////////////////////////////////////////////////////////////////
   return (
     <ResultWrapper>
       {!allInputsFilled ? inputEmptyWarning : null}
@@ -95,8 +120,36 @@ function ResultSemilog({ type, regressionLine }) {
             <td>Skin factor</td>
             <td>{skin}</td>
           </tr>
+          {type === 'Horner method' && (
+            <>
+              <tr>
+                <td>p* - false pressure</td>
+                <td>{falsePressure}</td>
+              </tr>
+              <tr>
+                <td>Average Pressure (psi)</td>
+                <td>{averagePressure}</td>
+              </tr>
+            </>
+          )}
         </tbody>
       </table>
+      {type === 'Horner method' && (
+        <>
+          <p className='note1'>
+            <span>Note 1: </span>The reservoir must be infinite acting from the
+            beginning of production through the end of the buildup for the
+            extrapolated pressure p* to be the same as the initial reservoir
+            pressure. If the reservoir is not infinite acting, the extrapolated
+            pressure p* is neither the initial reservoir pressure nor the
+            average drainage-area pressure
+          </p>
+          <p className='note2'>
+            <span>Note 2: </span>Average drainage-area pressure is calculated
+            with Ramey-Cobb method using Horner semilog plot
+          </p>
+        </>
+      )}
     </ResultWrapper>
   )
 }
@@ -125,6 +178,16 @@ const ResultWrapper = styled.div`
   .warning {
     color: red;
     margin-bottom: 0.5rem;
+  }
+
+  .note1,
+  .note2 {
+    margin: 1rem;
+    text-align: justify;
+  }
+  span {
+    color: red;
+    font-weight: 900;
   }
 `
 
