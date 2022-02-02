@@ -10,6 +10,13 @@ import {
   SET_HORNER_ANNOTATION,
   SET_AGARWAL_REGRESSION,
   SET_AGARWAL_ANNOTATION,
+  SET_TIME_IARF,
+  SET_PRESSURE_CHANGE_IARF,
+  SET_PRESSURE_DERIVATIVE_IARF,
+  SET_TIME_WBS,
+  SET_PRESSURE_WBS,
+  SET_ANNOTATION_IARF,
+  SET_ANNOTATION_WBS,
 } from '../actions'
 import readXlsxFile from 'read-excel-file'
 
@@ -31,6 +38,13 @@ const initialState = {
   hornerAnnotation: '',
   agarwalRegression: '',
   agarwalAnnotation: '',
+  timeIARF: '',
+  pressureChangeIARF: '',
+  pressureDerivativeIARF: '',
+  timeWBS: '',
+  pressureWBS: '',
+  annotationIARF: '',
+  annotationWBS: '',
 }
 
 const InputContext = React.createContext()
@@ -81,6 +95,34 @@ const InputProvider = ({ children }) => {
     dispatch({ type: SET_AGARWAL_ANNOTATION, payload: annotationObject })
   }
 
+  const setTimeIARF = (time) => {
+    dispatch({ type: SET_TIME_IARF, payload: time })
+  }
+
+  const setPressureChangeIARF = (pressure) => {
+    dispatch({ type: SET_PRESSURE_CHANGE_IARF, payload: pressure })
+  }
+
+  const setPressureDerivativeIARF = (pressure) => {
+    dispatch({ type: SET_PRESSURE_DERIVATIVE_IARF, payload: pressure })
+  }
+
+  const setTimeWBS = (time) => {
+    dispatch({ type: SET_TIME_WBS, payload: time })
+  }
+
+  const setPressureWBS = (pressure) => {
+    dispatch({ type: SET_PRESSURE_WBS, payload: pressure })
+  }
+
+  const setAnnotationIARF = (annotation) => {
+    dispatch({ type: SET_ANNOTATION_IARF, payload: annotation })
+  }
+
+  const setAnnotationWBS = (annotation) => {
+    dispatch({ type: SET_ANNOTATION_WBS, payload: annotation })
+  }
+
   return (
     <InputContext.Provider
       value={{
@@ -94,6 +136,13 @@ const InputProvider = ({ children }) => {
         setHornerAnnotation,
         setAgarwalRegression,
         setAgarwalAnnotation,
+        setTimeIARF,
+        setPressureChangeIARF,
+        setPressureDerivativeIARF,
+        setTimeWBS,
+        setPressureWBS,
+        setAnnotationIARF,
+        setAnnotationWBS,
       }}
     >
       {children}

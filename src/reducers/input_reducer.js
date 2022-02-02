@@ -8,6 +8,13 @@ import {
   SET_HORNER_ANNOTATION,
   SET_AGARWAL_REGRESSION,
   SET_AGARWAL_ANNOTATION,
+  SET_TIME_IARF,
+  SET_PRESSURE_CHANGE_IARF,
+  SET_PRESSURE_DERIVATIVE_IARF,
+  SET_TIME_WBS,
+  SET_PRESSURE_WBS,
+  SET_ANNOTATION_IARF,
+  SET_ANNOTATION_WBS,
 } from '../actions'
 import sampleData from '../sampleData'
 
@@ -67,6 +74,41 @@ const input_reducer = (state, action) => {
       return {
         ...state,
         agarwalAnnotation: action.payload,
+      }
+    case SET_TIME_IARF:
+      return {
+        ...state,
+        timeIARF: action.payload,
+      }
+    case SET_PRESSURE_CHANGE_IARF:
+      return {
+        ...state,
+        pressureChangeIARF: action.payload,
+      }
+    case SET_PRESSURE_DERIVATIVE_IARF:
+      return {
+        ...state,
+        pressureDerivativeIARF: action.payload,
+      }
+    case SET_TIME_WBS:
+      return {
+        ...state,
+        timeWBS: action.payload,
+      }
+    case SET_PRESSURE_WBS:
+      return {
+        ...state,
+        pressureWBS: action.payload,
+      }
+    case SET_ANNOTATION_IARF:
+      return {
+        ...state,
+        annotationIARF: action.payload,
+      }
+    case SET_ANNOTATION_WBS:
+      return {
+        ...state,
+        annotationWBS: action.payload,
       }
     default:
       return state

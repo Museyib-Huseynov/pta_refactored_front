@@ -83,6 +83,7 @@ const InputWrapper = styled.form`
     background: #ff7000;
     color: #000;
     font-weight: 600;
+    // border: none;
   }
 `
 

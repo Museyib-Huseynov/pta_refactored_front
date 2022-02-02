@@ -11,17 +11,25 @@ Chart.register(...registerables, annotationPlugin)
 function LogLog() {
   const [IARF, setIARF] = useState(false)
   const [WBS, setWBS] = useState(false)
-  const [timeIARF, setTimeIARF] = useState('')
-  const [pressureChangeIARF, setPressureChangeIARF] = useState('')
-  const [pressureDerivativeIARF, setPressureDerivativeIARF] = useState('')
-  const [timeWBS, setTimeWBS] = useState('')
-  const [pressureWBS, setPressureWBS] = useState('')
-
-  const [annotationIARF, setAnnotationIARF] = useState('')
-  const [annotationWBS, setAnnotationWBS] = useState('')
 
   const chartRef = useRef(null)
-  const { importedData } = useInputContext()
+  const {
+    importedData,
+    timeIARF,
+    setTimeIARF,
+    pressureChangeIARF,
+    setPressureChangeIARF,
+    pressureDerivativeIARF,
+    setPressureDerivativeIARF,
+    timeWBS,
+    setTimeWBS,
+    pressureWBS,
+    setPressureWBS,
+    annotationIARF,
+    setAnnotationIARF,
+    annotationWBS,
+    setAnnotationWBS,
+  } = useInputContext()
   ///////////////////////////////////////////////////////
   // handle IARF
   ////////////////////////////////////////////////////////
@@ -300,6 +308,52 @@ function LogLog() {
           },
           tooltip: {
             // enabled: false,
+          },
+          annotation: {
+            annotations: {
+              IARF: annotationIARF
+                ? {
+                    type: 'line',
+                    xMin: annotationIARF.xMin,
+                    xMax: annotationIARF.xMax,
+                    yMin: annotationIARF.yMin,
+                    yMax: annotationIARF.yMax,
+                    borderColor: 'black',
+                    borderWidth: 2,
+                    label: {
+                      enabled: true,
+                      content: 'IARF',
+                      backgroundColor: 'transparent',
+                      color: 'black',
+                      padding: 10,
+                      // xAdjust: -150,
+                      yAdjust: -20,
+                      font: { style: 'bold', size: 18 },
+                    },
+                  }
+                : null,
+              WBS: annotationWBS
+                ? {
+                    type: 'line',
+                    xMin: annotationWBS.xMin,
+                    xMax: annotationWBS.xMax,
+                    yMin: annotationWBS.yMin,
+                    yMax: annotationWBS.yMax,
+                    borderColor: 'black',
+                    borderWidth: 2,
+                    label: {
+                      enabled: true,
+                      content: 'WBS',
+                      backgroundColor: 'transparent',
+                      color: 'black',
+                      padding: 10,
+                      xAdjust: -20,
+                      yAdjust: -20,
+                      font: { style: 'bold', size: 18 },
+                    },
+                  }
+                : null,
+            },
           },
         },
       },
