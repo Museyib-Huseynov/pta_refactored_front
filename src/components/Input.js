@@ -1,9 +1,15 @@
 import styled from 'styled-components'
 import { useInputContext } from '../context/input_context'
 import { InputElement } from '.'
+import { useNavigate } from 'react-router-dom'
 
 const Input = () => {
   const { setImport, loadSampleData } = useInputContext()
+  const navigate = useNavigate()
+  const handleLoadSampleData = () => {
+    loadSampleData()
+    navigate('/mdh')
+  }
   return (
     <InputWrapper>
       <h1>Input data</h1>
