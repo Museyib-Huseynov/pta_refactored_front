@@ -33,7 +33,7 @@ const Input = () => {
         Import Pressure data
       </label>
       <input id='file' type='file' accept='.xlsx' onChange={setImport} hidden />
-      <button type='button' onClick={loadSampleData}>
+      <button type='button' onClick={handleLoadSampleData}>
         Load Sample Data
       </button>
     </InputWrapper>
