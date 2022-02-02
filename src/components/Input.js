@@ -6,6 +6,12 @@ import { useNavigate } from 'react-router-dom'
 const Input = () => {
   const { setImport, loadSampleData } = useInputContext()
   const navigate = useNavigate()
+
+  const handleImportData = (e) => {
+    setImport(e)
+    navigate('/mdh')
+  }
+
   const handleLoadSampleData = () => {
     loadSampleData()
     navigate('/mdh')
@@ -32,7 +38,13 @@ const Input = () => {
       <label htmlFor='file' className='file'>
         Import Pressure data
       </label>
-      <input id='file' type='file' accept='.xlsx' onChange={setImport} hidden />
+      <input
+        id='file'
+        type='file'
+        accept='.xlsx'
+        onChange={handleImportData}
+        hidden
+      />
       <button type='button' onClick={handleLoadSampleData}>
         Load Sample Data
       </button>

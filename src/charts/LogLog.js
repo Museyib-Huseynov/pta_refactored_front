@@ -17,8 +17,8 @@ function LogLog() {
   const [timeWBS, setTimeWBS] = useState('')
   const [pressureWBS, setPressureWBS] = useState('')
 
-  const [annotationIARF, setAnnotationIARF] = useState([])
-  const [annotationWBS, setAnnotationWBS] = useState([])
+  const [annotationIARF, setAnnotationIARF] = useState('')
+  const [annotationWBS, setAnnotationWBS] = useState('')
 
   const chartRef = useRef(null)
   const { importedData } = useInputContext()
@@ -53,7 +53,12 @@ function LogLog() {
         setPressureChangeIARF(pressureChangeForIARF)
         setPressureDerivativeIARF(pressureDerivativeForIARF)
 
-        setAnnotationIARF([dataX - 0.8, dataX + 0.8, dataY, dataY])
+        setAnnotationIARF({
+          xMin: dataX - 0.8,
+          xMax: dataX + 0.8,
+          yMin: dataY,
+          yMax: dataY,
+        })
 
         if (annotationWBS.length === 0) {
           chart.options.plugins.annotation.annotations = {
@@ -100,10 +105,10 @@ function LogLog() {
             },
             WBS: {
               type: 'line',
-              xMin: annotationWBS[0],
-              xMax: annotationWBS[1],
-              yMin: annotationWBS[2],
-              yMax: annotationWBS[3],
+              xMin: annotationWBS.xMin,
+              xMax: annotationWBS.xMax,
+              yMin: annotationWBS.yMin,
+              yMax: annotationWBS.yMax,
               borderColor: 'black',
               borderWidth: 2,
               label: {
@@ -145,12 +150,12 @@ function LogLog() {
         setTimeWBS(dataX)
         setPressureWBS(dataY)
 
-        setAnnotationWBS([
-          dataX - 0.6,
-          dataX + 0.6,
-          dataX - 0.6 + b,
-          dataX + 0.6 + b,
-        ])
+        setAnnotationWBS({
+          xMin: dataX - 0.6,
+          xMax: dataX + 0.6,
+          yMin: dataX - 0.6 + b,
+          yMax: dataX + 0.6 + b,
+        })
 
         if (annotationIARF.length === 0) {
           chart.options.plugins.annotation.annotations = {
@@ -178,10 +183,10 @@ function LogLog() {
           chart.options.plugins.annotation.annotations = {
             IARF: {
               type: 'line',
-              xMin: annotationIARF[0],
-              xMax: annotationIARF[1],
-              yMin: annotationIARF[2],
-              yMax: annotationIARF[3],
+              xMin: annotationIARF.xMin,
+              xMax: annotationIARF.xMax,
+              yMin: annotationIARF.yMin,
+              yMax: annotationIARF.yMax,
               borderColor: 'black',
               borderWidth: 2,
               label: {
