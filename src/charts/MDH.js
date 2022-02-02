@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useEffect } from 'react'
 import { ResultSemilog } from '../components'
 import { useInputContext } from '../context/input_context'
 import styled from 'styled-components'
@@ -10,9 +10,14 @@ import regression from 'regression'
 Chart.register(...registerables, annotationPlugin)
 
 function MDH() {
-  const [regressionLine, setRegressionLine] = useState(null)
   const chartRef = useRef(null)
-  const { importedData } = useInputContext()
+  const {
+    importedData,
+    mdhRegression,
+    setMDHRegression,
+    mdhAnnotation,
+    setMDHAnnotation,
+  } = useInputContext()
 
   const MDH_data = importedData.map((item) => [Math.log10(item[0]), item[1]])
 
@@ -60,6 +65,30 @@ function MDH() {
           tooltip: {
             // enabled: false,
           },
+          annotation: {
+            annotations: mdhAnnotation
+              ? {
+                  line1: {
+                    type: 'line',
+                    xMin: mdhAnnotation.xMin,
+                    yMin: mdhAnnotation.yMin,
+                    xMax: mdhAnnotation.xMax,
+                    yMax: mdhAnnotation.yMax,
+                    borderColor: 'black',
+                    borderWidth: 2,
+                    label: {
+                      enabled: true,
+                      content: mdhRegression?.string,
+                      backgroundColor: 'transparent',
+                      color: 'black',
+                      padding: 10,
+                      xAdjust: -150,
+                      yAdjust: -10,
+                    },
+                  },
+                }
+              : null,
+          },
         },
         onClick: (e) => {
           if (myChart) {
@@ -74,7 +103,7 @@ function MDH() {
             }
 
             const result = regression.linear(regressionArray)
-            setRegressionLine(result)
+            setMDHRegression(result)
 
             if (result.r2) {
               //check to see when click out of range no error in console
@@ -101,6 +130,14 @@ function MDH() {
                 },
               }
             }
+            setMDHAnnotation({
+              xMin: dataX - 0.5,
+              yMin: result.predict(dataX - 0.5)[1],
+              xMax: regressionArray[regressionArray.length - 1][0],
+              yMax: result.predict(
+                regressionArray[regressionArray.length - 1][0]
+              )[1],
+            })
             myChart.update()
           }
         },
@@ -114,7 +151,7 @@ function MDH() {
   return (
     <MDHWrapper>
       <canvas ref={chartRef} style={{ cursor: 'crosshair' }}></canvas>
-      <ResultSemilog type='MDH method' regressionLine={regressionLine} />
+      <ResultSemilog type='MDH method' regressionLine={mdhRegression} />
     </MDHWrapper>
   )
 }

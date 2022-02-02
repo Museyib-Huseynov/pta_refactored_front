@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useEffect } from 'react'
 import { ResultSemilog } from '../components'
 import { useInputContext } from '../context/input_context'
 import styled from 'styled-components'
@@ -10,9 +10,15 @@ import regression from 'regression'
 Chart.register(...registerables, annotationPlugin)
 
 function Horner() {
-  const [regressionLine, setRegressionLine] = useState(null)
   const chartRef = useRef(null)
-  const { importedData, productionTime } = useInputContext()
+  const {
+    importedData,
+    productionTime,
+    hornerRegression,
+    setHornerRegression,
+    hornerAnnotation,
+    setHornerAnnotation,
+  } = useInputContext()
 
   const Horner_data = []
   if (productionTime) {
@@ -26,7 +32,6 @@ function Horner() {
   }
 
   useEffect(() => {
-    setRegressionLine(null) // if we change productionTime set regressionLine to null when update
     const myChart = new Chart(chartRef.current, {
       type: 'scatter',
       ////////////////////////////////////////////
@@ -71,6 +76,30 @@ function Horner() {
           tooltip: {
             // enabled: false,
           },
+          annotation: {
+            annotations: hornerAnnotation
+              ? {
+                  line1: {
+                    type: 'line',
+                    xMin: hornerAnnotation.xMin,
+                    yMin: hornerAnnotation.yMin,
+                    xMax: hornerAnnotation.xMax,
+                    yMax: hornerAnnotation.yMax,
+                    borderColor: 'black',
+                    borderWidth: 2,
+                    label: {
+                      enabled: true,
+                      content: hornerRegression?.string,
+                      backgroundColor: 'transparent',
+                      color: 'black',
+                      padding: 10,
+                      xAdjust: -150,
+                      yAdjust: -10,
+                    },
+                  },
+                }
+              : null,
+          },
         },
         onClick: (e) => {
           if (myChart) {
@@ -85,10 +114,10 @@ function Horner() {
             }
 
             const result = regression.linear(regressionArray)
-            setRegressionLine(result)
+            setHornerRegression(result)
 
             if (result.r2) {
-              //check to see when click out of range no error in console
+              // check to see when click out of range no error in console
               myChart.options.plugins.annotation.annotations = {
                 line1: {
                   type: 'line',
@@ -111,6 +140,14 @@ function Horner() {
                   },
                 },
               }
+              setHornerAnnotation({
+                xMin: dataX + 0.5,
+                yMin: result.predict(dataX + 0.5)[1],
+                xMax: regressionArray[regressionArray.length - 1][0],
+                yMax: result.predict(
+                  regressionArray[regressionArray.length - 1][0]
+                )[1],
+              })
             }
             myChart.update()
           }
@@ -125,7 +162,7 @@ function Horner() {
   return (
     <HornerWrapper>
       <canvas ref={chartRef} style={{ cursor: 'crosshair' }}></canvas>
-      <ResultSemilog type='Horner method' regressionLine={regressionLine} />
+      <ResultSemilog type='Horner method' regressionLine={hornerRegression} />
     </HornerWrapper>
   )
 }

@@ -94,14 +94,12 @@ function ResultSemilog({ type, regressionLine }) {
   const HTRForAveragePressure =
     (0.0002637 * permeability * shapeFactor * productionTime) /
     (porosity * 0.01 * viscosity * totalCompressibility * area * 43560)
-  console.log('HTRForAveragePressure', HTRForAveragePressure)
   let averagePressure = ''
   if (regressionLine) {
     averagePressure = regressionLine.predict(
       Math.log10(HTRForAveragePressure)
     )[1]
   }
-  console.log('averagePressure', averagePressure)
   ////////////////////////////////////////////////////////////////////////////
   return (
     <ResultWrapper>

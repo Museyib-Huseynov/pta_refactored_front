@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useEffect } from 'react'
 import { ResultSemilog } from '../components'
 import { useInputContext } from '../context/input_context'
 import styled from 'styled-components'
@@ -10,9 +10,15 @@ import regression from 'regression'
 Chart.register(...registerables, annotationPlugin)
 
 function Agarwal() {
-  const [regressionLine, setRegressionLine] = useState(null)
   const chartRef = useRef(null)
-  const { importedData, productionTime } = useInputContext()
+  const {
+    importedData,
+    productionTime,
+    agarwalRegression,
+    setAgarwalRegression,
+    agarwalAnnotation,
+    setAgarwalAnnotation,
+  } = useInputContext()
 
   let Agarwal_data = []
   if (productionTime) {
@@ -23,7 +29,6 @@ function Agarwal() {
   }
 
   useEffect(() => {
-    setRegressionLine(null) // if we change productionTime set regressionLine to null when update
     const myChart = new Chart(chartRef.current, {
       type: 'scatter',
       ////////////////////////////////////////////
@@ -67,6 +72,30 @@ function Agarwal() {
           tooltip: {
             // enabled: false,
           },
+          annotation: {
+            annotations: agarwalAnnotation
+              ? {
+                  line1: {
+                    type: 'line',
+                    xMin: agarwalAnnotation.xMin,
+                    yMin: agarwalAnnotation.yMin,
+                    xMax: agarwalAnnotation.xMax,
+                    yMax: agarwalAnnotation.yMax,
+                    borderColor: 'black',
+                    borderWidth: 2,
+                    label: {
+                      enabled: true,
+                      content: agarwalRegression?.string,
+                      backgroundColor: 'transparent',
+                      color: 'black',
+                      padding: 10,
+                      xAdjust: -150,
+                      yAdjust: -10,
+                    },
+                  },
+                }
+              : null,
+          },
         },
         onClick: (e) => {
           if (myChart) {
@@ -81,7 +110,7 @@ function Agarwal() {
             }
 
             const result = regression.linear(regressionArray)
-            setRegressionLine(result)
+            setAgarwalRegression(result)
 
             if (result.r2) {
               //check to see when click out of range no error in console
@@ -107,6 +136,14 @@ function Agarwal() {
                   },
                 },
               }
+              setAgarwalAnnotation({
+                xMin: dataX - 0.5,
+                yMin: result.predict(dataX - 0.5)[1],
+                xMax: regressionArray[regressionArray.length - 1][0],
+                yMax: result.predict(
+                  regressionArray[regressionArray.length - 1][0]
+                )[1],
+              })
             }
             myChart.update()
           }
@@ -123,7 +160,7 @@ function Agarwal() {
       <canvas ref={chartRef} style={{ cursor: 'crosshair' }}></canvas>
       <ResultSemilog
         type='Agarwal Equivalent-Time method'
-        regressionLine={regressionLine}
+        regressionLine={agarwalRegression}
       />
     </AgarwalWrapper>
   )
