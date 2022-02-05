@@ -5,7 +5,7 @@ import { MdEmail } from 'react-icons/md'
 import { AiOutlineUser } from 'react-icons/ai'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
-// axios.defaults.withCredentials = true
+import { useGlobalUserContext } from '../context/global_user_context'
 
 function Login() {
   const [login, setLogin] = useState(true)
@@ -15,6 +15,7 @@ function Login() {
     password: '',
   })
   const [loading, setLoading] = useState(false)
+  const { saveUser } = useGlobalUserContext()
 
   const navigate = useNavigate()
 
@@ -27,20 +28,32 @@ function Login() {
     setLoading(true)
     const { username, email, password } = values
     const loginUser = { email, password }
-    const registerUser = { username, email, password }
+    const registerUser = { name: username, email, password }
     if (login) {
       try {
-        const data = await axios.post(
+        const { data } = await axios.post(
           'http://localhost:5000/api/v1/auth/login',
           loginUser,
           { withCredentials: true }
         )
-        console.log(data)
         setValues({ email: '', password: '' })
         setLoading(false)
+        saveUser(data.user)
         navigate('/')
       } catch (error) {
-        console.log(error)
+        setLoading(false)
+      }
+    } else {
+      try {
+        const { data } = await axios.post(
+          'http://localhost:5000/api/v1/auth/register',
+          registerUser,
+          { withCredentials: true }
+        )
+        setValues({ username: '', email: '', password: '' })
+        setLoading(false)
+        console.log(data.msg)
+      } catch (error) {
         setLoading(false)
       }
     }

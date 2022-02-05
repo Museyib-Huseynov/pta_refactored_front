@@ -11,7 +11,7 @@ function Verify() {
   const verifyToken = async () => {
     setLoading(true)
     try {
-      const data = await axios.post(
+      const { data } = await axios.post(
         'http://localhost:5000/api/v1/auth/verify-email',
         {
           verificationToken: searchParams.get('token'),
