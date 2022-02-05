@@ -1,30 +1,106 @@
+import { useState } from 'react'
 import styled from 'styled-components'
 import { FaUser, FaLock } from 'react-icons/fa'
+import { MdEmail } from 'react-icons/md'
 import { AiOutlineUser } from 'react-icons/ai'
+import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
+// axios.defaults.withCredentials = true
 
 function Login() {
+  const [login, setLogin] = useState(true)
+  const [values, setValues] = useState({
+    username: '',
+    email: '',
+    password: '',
+  })
+  const [loading, setLoading] = useState(false)
+
+  const navigate = useNavigate()
+
+  const handleChange = (e) => {
+    setValues({ ...values, [e.target.name]: e.target.value })
+  }
+
+  const onSubmit = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    const { username, email, password } = values
+    const loginUser = { email, password }
+    const registerUser = { username, email, password }
+    if (login) {
+      try {
+        const data = await axios.post(
+          'http://localhost:5000/api/v1/auth/login',
+          loginUser,
+          { withCredentials: true }
+        )
+        console.log(data)
+        setValues({ email: '', password: '' })
+        setLoading(false)
+        navigate('/')
+      } catch (error) {
+        console.log(error)
+        setLoading(false)
+      }
+    }
+  }
+
+  const toggleLoginRegister = () => setLogin(!login)
   return (
     <LoginWrapper>
-      <form>
+      <form onSubmit={onSubmit}>
         <AiOutlineUser className='main-icon' />
-        <h1 className='header-login'>Login</h1>
+        <h1 className='header-login'>{login ? 'Login' : 'Register'}</h1>
+        {!login && (
+          <div className='icon-input-container'>
+            <FaUser className='icon' />
+            <input
+              type='text'
+              placeholder='Username'
+              name='username'
+              value={values.username}
+              onChange={handleChange}
+              autoComplete='off'
+            />
+          </div>
+        )}
         <div className='icon-input-container'>
-          <FaUser className='icon' />
+          <MdEmail className='icon' />
           <input
             type='text'
-            id='username'
-            placeholder='Username'
+            placeholder='Email'
+            name='email'
+            value={values.email}
+            onChange={handleChange}
             autoComplete='off'
           />
         </div>
         <div className='icon-input-container'>
           <FaLock className='icon' />
-          <input type='password' id='password' placeholder='Password' />
+          <input
+            type='password'
+            placeholder='Password'
+            name='password'
+            value={values.password}
+            onChange={handleChange}
+          />
         </div>
-        <small>Forgot password?</small>
+        {login && <small>Forgot password?</small>}
         <button type='submit' className='submit'>
-          Login
+          {login ? 'Login' : 'Register'}
         </button>
+        {login ? (
+          <p className='register-login'>
+            Do not have an account ?{' '}
+            <span onClick={toggleLoginRegister}>Register</span>
+          </p>
+        ) : (
+          <p className='register-login'>
+            Already have an account ?{' '}
+            <span onClick={toggleLoginRegister}>Login</span>
+          </p>
+        )}
       </form>
     </LoginWrapper>
   )
@@ -104,7 +180,20 @@ const LoginWrapper = styled.div`
     cursor: pointer;
   }
 
+  .register-login {
+    place-self: center;
+    font-size: 0.9rem;
+    user-select: none;
+  }
+
+  span {
+    font-size: 1rem;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
   .submit {
+    font-size: 1rem;
     color: #fff;
     place-self: center;
     width: 90%;

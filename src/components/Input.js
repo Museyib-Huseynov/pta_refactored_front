@@ -18,6 +18,8 @@ const Input = () => {
   }
   return (
     <InputWrapper>
+      <InputElement type='field' label='Field name' />
+      <InputElement type='well' label='Well number' />
       <h1>Input data</h1>
       <InputElement type='porosity' label='Porosity (%)' />
       <InputElement type='viscosity' label='Viscosity (cp)' />

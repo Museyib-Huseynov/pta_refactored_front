@@ -14,7 +14,7 @@ const InputElement = ({ type, label }) => {
           : label}
       </label>
       <input
-        type='number'
+        type={type === 'field' ? 'text' : 'number'}
         id={type}
         name={type}
         value={state[type]}

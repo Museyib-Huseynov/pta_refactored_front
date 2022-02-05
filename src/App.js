@@ -1,4 +1,4 @@
-import { Home, Login, NotFound } from './pages'
+import { Home, Login, NotFound, Verify } from './pages'
 import { IndexRouteElement } from './components'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { MDH, Horner, Agarwal } from './charts'
@@ -14,6 +14,7 @@ function App() {
           <Route path='agarwal' element={<Agarwal />} />
         </Route>
         <Route path='/login' element={<Login />} />
+        <Route path='/user/verify-email' element={<Verify />} />
         <Route path='*' element={<NotFound />} />
       </Routes>
     </BrowserRouter>

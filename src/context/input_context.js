@@ -21,6 +21,8 @@ import {
 import readXlsxFile from 'read-excel-file'
 
 const initialState = {
+  field: '',
+  well: '',
   porosity: '',
   viscosity: '',
   totalCompressibility: '',
@@ -55,6 +57,9 @@ const InputProvider = ({ children }) => {
   const setInput = (e) => {
     const name = e.target.name
     let value = e.target.value
+    if (name === 'field') {
+      value = value.toUpperCase()
+    }
     if (name === 'porosity' && (value < 0 || value > 100)) {
       value = 0
     }

@@ -16,7 +16,7 @@ function ResultSemilog({ type, regressionLine }) {
     area,
     importedData,
   } = useInputContext()
-
+  console.log(typeof regressionLine)
   const allInputsFilled =
     porosity !== '' &&
     viscosity !== '' &&
