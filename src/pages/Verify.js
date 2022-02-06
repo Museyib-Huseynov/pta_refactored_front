@@ -1,12 +1,16 @@
 import { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import { useSearchParams, Link } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 import axios from 'axios'
+import ReactLoading from 'react-loading'
+import { useNavigate } from 'react-router-dom'
 
 function Verify() {
   const [error, setError] = useState(false)
   const [loading, setLoading] = useState(false)
   const [searchParams] = useSearchParams()
+
+  const navigate = useNavigate()
 
   const verifyToken = async () => {
     setLoading(true)
@@ -18,6 +22,7 @@ function Verify() {
           email: searchParams.get('email'),
         }
       )
+      navigate('/login')
     } catch (error) {
       console.log(error)
       setError(true)
@@ -32,7 +37,12 @@ function Verify() {
   if (loading) {
     return (
       <VerifyWrapper>
-        <h2>Loading...</h2>
+        <ReactLoading
+          type='spin'
+          color='rgba(7,96,246, 0.5)'
+          height={200}
+          width={100}
+        />
       </VerifyWrapper>
     )
   }
@@ -40,19 +50,17 @@ function Verify() {
   if (error) {
     return (
       <VerifyWrapper>
-        <h4>There was an error, please double check your verification link </h4>
+        <h1>There was an error, please double check your verification link </h1>
       </VerifyWrapper>
     )
   }
-
-  return (
-    <VerifyWrapper>
-      <h2>Account Confirmed</h2>
-      <Link to='/login'>Please login</Link>
-    </VerifyWrapper>
-  )
 }
 
-const VerifyWrapper = styled.div``
+const VerifyWrapper = styled.div`
+  height: 100vh;
+  display: grid;
+  place-content: center;
+  place-items: center;
+`
 
 export default Verify

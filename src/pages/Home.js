@@ -3,15 +3,12 @@ import { Input } from '../components'
 import styled from 'styled-components'
 import { useInputContext } from '../context/input_context'
 import { PressureTime, LogLog } from '../charts'
-import { useGlobalUserContext } from '../context/global_user_context'
 
 const Home = () => {
   const { importedData } = useInputContext()
-  const { logoutUser } = useGlobalUserContext()
 
   return (
     <HomeWrapper>
-      <button onClick={logoutUser}>logout</button>
       <Input />
       {importedData.length !== 0 && (
         <>
