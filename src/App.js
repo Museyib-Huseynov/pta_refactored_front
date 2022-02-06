@@ -1,13 +1,24 @@
 import { Home, Login, NotFound, Verify, ProtectedRoute } from './pages'
 import { IndexRouteElement } from './components'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import styled from 'styled-components'
 import { MDH, Horner, Agarwal } from './charts'
 import { useGlobalUserContext } from './context/global_user_context'
+import ReactLoading from 'react-loading'
 
 function App() {
   const { isLoading } = useGlobalUserContext()
   if (isLoading) {
-    return <h1>Loading ...</h1>
+    return (
+      <LoadingWrapper>
+        <ReactLoading
+          type='spin'
+          color='rgba(7,96,246, 0.5)'
+          height={200}
+          width={100}
+        />
+      </LoadingWrapper>
+    )
   }
   return (
     <BrowserRouter>
@@ -32,5 +43,12 @@ function App() {
     </BrowserRouter>
   )
 }
+
+const LoadingWrapper = styled.div`
+  height: 100vh;
+  display: grid;
+  place-content: center;
+  place-items: center;
+`
 
 export default App
