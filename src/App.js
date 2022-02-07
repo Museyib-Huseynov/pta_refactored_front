@@ -1,4 +1,12 @@
-import { Home, Login, NotFound, Verify, ProtectedRoute } from './pages'
+import {
+  Home,
+  Login,
+  NotFound,
+  Verify,
+  ProtectedRoute,
+  ForgotPassword,
+  ResetPassword,
+} from './pages'
 import { IndexRouteElement } from './components'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import styled from 'styled-components'
@@ -37,6 +45,8 @@ function App() {
           <Route path='agarwal' element={<Agarwal />} />
         </Route>
         <Route path='/login' element={<Login />} />
+        <Route path='/forgot-password' element={<ForgotPassword />} />
+        <Route path='/reset-password' element={<ResetPassword />} />
         <Route path='/user/verify-email' element={<Verify />} />
         <Route path='*' element={<NotFound />} />
       </Routes>

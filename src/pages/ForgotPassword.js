@@ -1,152 +1,80 @@
 import { useState } from 'react'
 import styled from 'styled-components'
-import { FaUser, FaLock } from 'react-icons/fa'
 import { MdEmail } from 'react-icons/md'
-import { AiOutlineUser } from 'react-icons/ai'
-import { useNavigate } from 'react-router-dom'
+import useLocalState from '../utils/localState'
 import axios from 'axios'
-import { useGlobalUserContext } from '../context/global_user_context'
-import ReactLoading from 'react-loading'
 
-function Login() {
-  const [login, setLogin] = useState(true)
-  const [values, setValues] = useState({
-    username: '',
-    email: '',
-    password: '',
-  })
-  const [loading, setLoading] = useState(false)
-  const [authError, setAuthError] = useState(false)
-  const [afterRegister, setAfterRegister] = useState(false)
-  const { saveUser } = useGlobalUserContext()
-
-  const navigate = useNavigate()
+function ForgotPassword() {
+  const [email, setEmail] = useState('')
+  const {
+    alertText,
+    showAlertText,
+    hideAlertText,
+    loading,
+    setLoading,
+    success,
+    setSuccess,
+  } = useLocalState()
 
   const handleChange = (e) => {
-    setValues({ ...values, [e.target.name]: e.target.value })
+    setEmail(e.target.value)
   }
 
   const onSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
-    const { username, email, password } = values
-    const loginUser = { email, password }
-    const registerUser = { name: username, email, password }
-    if (login) {
-      try {
-        setAuthError(false)
-        const { data } = await axios.post(
-          'http://localhost:5000/api/v1/auth/login',
-          loginUser,
-          { withCredentials: true }
-        )
-        setValues({ email: '', password: '' })
-        setLoading(false)
-        saveUser(data.user)
-        navigate('/')
-      } catch (error) {
-        setAuthError(true)
-        setLoading(false)
-      }
-    } else {
-      try {
-        const { data } = await axios.post(
-          'http://localhost:5000/api/v1/auth/register',
-          registerUser,
-          { withCredentials: true }
-        )
-        setValues({ username: '', email: '', password: '' })
-        setLoading(false)
-        setAfterRegister(true)
-        console.log(data.msg)
-      } catch (error) {
-        setLoading(false)
-      }
+    hideAlertText()
+    if (!email) {
+      showAlertText({
+        text: 'Please provide email',
+      })
+      setLoading(false)
+      return
     }
+
+    try {
+      const { data } = await axios.post(
+        'http://localhost:5000/api/v1/auth/forgot-password',
+        {
+          email,
+        }
+      )
+      showAlertText({ text: data.msg, type: 'success' })
+      setSuccess(true)
+    } catch (error) {
+      showAlertText({ text: 'Something went wrong, please try again' })
+      setSuccess(true)
+    }
+    setLoading(false)
   }
 
-  const toggleLoginRegister = () => setLogin(!login)
-
-  if (loading) {
-    return (
-      <LoginWrapper>
-        <ReactLoading
-          type='spin'
-          color='rgba(7,96,246, 0.5)'
-          height={200}
-          width={100}
-        />
-      </LoginWrapper>
-    )
-  }
   return (
-    <LoginWrapper>
-      <form onSubmit={onSubmit}>
-        <AiOutlineUser className='main-icon' />
-        <h1 className='header-login'>{login ? 'Login' : 'Register'}</h1>
-        {!login && (
+    <ForgotPasswordWrapper>
+      {!success && (
+        <form onSubmit={onSubmit}>
+          <h1 className='header-login'>Forgot password </h1>
           <div className='icon-input-container'>
-            <FaUser className='icon' />
+            <MdEmail className='icon' />
             <input
-              type='text'
-              placeholder='Username'
-              name='username'
-              value={values.username}
+              type='email'
+              name='email'
+              placeholder='Email'
+              value={email}
               onChange={handleChange}
               autoComplete='off'
             />
           </div>
-        )}
-        <div className='icon-input-container'>
-          <MdEmail className='icon' />
-          <input
-            type='text'
-            placeholder='Email'
-            name='email'
-            value={values.email}
-            onChange={handleChange}
-            autoComplete='off'
-          />
-        </div>
-        <div className='icon-input-container'>
-          <FaLock className='icon' />
-          <input
-            type='password'
-            placeholder='Password'
-            name='password'
-            value={values.password}
-            onChange={handleChange}
-          />
-        </div>
-        {login && (
-          <small onClick={() => navigate('/forgot-password')}>
-            Forgot password?
-          </small>
-        )}
-        {authError && <p className='authError'>Invalid Credentials</p>}
-        <button type='submit' className='submit'>
-          {login ? 'Login' : 'Register'}
-        </button>
-        {login ? (
-          <p className='register-login'>
-            Do not have an account ?{' '}
-            <span onClick={toggleLoginRegister}>Register</span>
-          </p>
-        ) : (
-          <p className='register-login'>
-            Already have an account ?{' '}
-            <span onClick={toggleLoginRegister}>Login</span>
-          </p>
-        )}
-      </form>
-      {afterRegister && (
-        <h1 className='afterRegister'>Please verify your email</h1>
+          <button type='submit' className='submit'>
+            {loading ? 'Please wait...' : 'Get Reset Password Link'}
+          </button>
+        </form>
       )}
-    </LoginWrapper>
+      {alertText.show && <div className='alertText'>{alertText.text}</div>}
+    </ForgotPasswordWrapper>
   )
 }
 
-const LoginWrapper = styled.div`
+const ForgotPasswordWrapper = styled.div`
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -218,31 +146,9 @@ const LoginWrapper = styled.div`
     user-select: none;
   }
 
-  small {
-    place-self: end;
-    cursor: pointer;
-  }
-
-  .register-login {
-    place-self: center;
-    font-size: 0.9rem;
-    user-select: none;
-  }
-
-  span {
-    font-size: 1rem;
-    text-decoration: underline;
-    cursor: pointer;
-  }
-
-  .afterRegister {
+  .alertText {
     background: yellow;
-  }
-
-  .authError {
-    color: red;
     font-size: 1.2rem;
-    place-self: center;
   }
 
   .submit {
@@ -263,4 +169,4 @@ const LoginWrapper = styled.div`
   }
 `
 
-export default Login
+export default ForgotPassword
