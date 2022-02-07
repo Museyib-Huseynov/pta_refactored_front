@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom'
 
 function Verify() {
   const [error, setError] = useState(false)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [searchParams] = useSearchParams()
 
   const navigate = useNavigate()

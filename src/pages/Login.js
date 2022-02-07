@@ -16,6 +16,7 @@ function Login() {
     password: '',
   })
   const [loading, setLoading] = useState(false)
+  const [authError, setAuthError] = useState(false)
   const [afterRegister, setAfterRegister] = useState(false)
   const { saveUser } = useGlobalUserContext()
 
@@ -33,6 +34,7 @@ function Login() {
     const registerUser = { name: username, email, password }
     if (login) {
       try {
+        setAuthError(false)
         const { data } = await axios.post(
           'http://localhost:5000/api/v1/auth/login',
           loginUser,
@@ -43,6 +45,7 @@ function Login() {
         saveUser(data.user)
         navigate('/')
       } catch (error) {
+        setAuthError(true)
         setLoading(false)
       }
     } else {
@@ -116,6 +119,7 @@ function Login() {
           />
         </div>
         {login && <small>Forgot password?</small>}
+        {authError && <p className='authError'>Invalid Credentials</p>}
         <button type='submit' className='submit'>
           {login ? 'Login' : 'Register'}
         </button>
@@ -229,6 +233,12 @@ const LoginWrapper = styled.div`
 
   .afterRegister {
     background: yellow;
+  }
+
+  .authError {
+    color: red;
+    font-size: 1.2rem;
+    place-self: center;
   }
 
   .submit {
