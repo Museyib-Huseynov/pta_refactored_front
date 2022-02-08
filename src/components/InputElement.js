@@ -2,10 +2,10 @@ import { useInputContext } from '../context/input_context'
 import styled from 'styled-components'
 import React from 'react'
 
-const InputElement = ({ type, label }) => {
+const InputElement = ({ type, label, marginTop }) => {
   const { setInput, ...state } = useInputContext()
   return (
-    <InputElementWrapper>
+    <InputElementWrapper marginTop={marginTop}>
       <label htmlFor={type}>
         {typeof label === 'object'
           ? label.map((item, index) => (
@@ -28,6 +28,7 @@ const InputElementWrapper = styled.div`
   display: grid;
   grid-template-columns: 2fr 1fr;
   justify-items: space-between;
+  margin-top: ${(props) => (props.marginTop === true ? '1rem' : 0)};
 
   label {
     place-self: center;

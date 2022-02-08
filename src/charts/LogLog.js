@@ -273,7 +273,7 @@ function LogLog() {
           },
           {
             data: derivativePressureData,
-            backgroundColor: 'red',
+            backgroundColor: '#ff7000',
           },
         ],
       },
@@ -302,7 +302,7 @@ function LogLog() {
             text: 'Log Log Diagnostic plot',
             position: 'top',
             font: {
-              size: 20,
+              size: 16,
               weight: 'bold',
             },
           },
@@ -403,7 +403,7 @@ const LogLogWrapper = styled.div`
   grid-auto-rows: min-content;
   place-content: top;
   grid-row-gap: 2rem;
-  margin-top: 2rem;
+  margin-top: 1rem;
 
   button {
     padding: 0.8rem;

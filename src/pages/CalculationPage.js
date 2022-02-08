@@ -4,11 +4,11 @@ import styled from 'styled-components'
 import { useInputContext } from '../context/input_context'
 import { PressureTime, LogLog } from '../charts'
 
-const Home = () => {
+const CalculationPage = () => {
   const { importedData } = useInputContext()
 
   return (
-    <HomeWrapper>
+    <CalculationPageWrapper>
       <Input />
       {importedData.length !== 0 && (
         <>
@@ -16,7 +16,7 @@ const Home = () => {
             <PressureTime />
             <nav className='links'>
               <NavLink
-                to='/mdh'
+                to='/calc/mdh'
                 className={({ isActive }) =>
                   isActive ? 'link active' : 'link'
                 }
@@ -24,7 +24,7 @@ const Home = () => {
                 MDH
               </NavLink>
               <NavLink
-                to='/horner'
+                to='/calc/horner'
                 className={({ isActive }) =>
                   isActive ? 'link active' : 'link'
                 }
@@ -32,7 +32,7 @@ const Home = () => {
                 Horner
               </NavLink>
               <NavLink
-                to='/agarwal'
+                to='/calc/agarwal'
                 className={({ isActive }) =>
                   isActive ? 'link active' : 'link'
                 }
@@ -45,14 +45,15 @@ const Home = () => {
           <LogLog />
         </>
       )}
-    </HomeWrapper>
+    </CalculationPageWrapper>
   )
 }
 
-const HomeWrapper = styled.div`
+const CalculationPageWrapper = styled.div`
   height: 100vh;
   display: grid;
   grid-template-columns: 350px 600px 700px;
+  column-gap: 2rem;
 
   -webkit-user-select: none; /* Safari */
   -ms-user-select: none; /* IE 10 and IE 11 */
@@ -65,6 +66,7 @@ const HomeWrapper = styled.div`
     grid-row-gap: 1rem;
     padding: 5px 10px;
     // grid-gap: 2rem;
+    margin-top: 1rem;
   }
 
   .links {
@@ -100,4 +102,4 @@ const HomeWrapper = styled.div`
     justify-content: center;
   }
 `
-export default Home
+export default CalculationPage

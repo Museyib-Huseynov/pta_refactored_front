@@ -9,16 +9,16 @@ const Input = () => {
 
   const handleImportData = (e) => {
     setImport(e)
-    navigate('/mdh')
+    navigate('/calc/mdh')
   }
 
   const handleLoadSampleData = () => {
     loadSampleData()
-    navigate('/mdh')
+    navigate('/calc/mdh')
   }
   return (
     <InputWrapper>
-      <InputElement type='field' label='Field name' />
+      <InputElement type='field' label='Field name' marginTop />
       <InputElement type='well' label='Well number' />
       <h1>Input data</h1>
       <InputElement type='porosity' label='Porosity (%)' />
@@ -58,7 +58,7 @@ const InputWrapper = styled.form`
   display: grid;
   grid-auto-rows: min-content;
   grid-row-gap: 1rem;
-  background: #c8c8c8;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 50px;
   padding: 1rem;
 
   -webkit-user-select: none; /* Safari */

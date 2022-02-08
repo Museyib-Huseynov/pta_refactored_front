@@ -1,5 +1,6 @@
 import {
-  Home,
+  Navbar,
+  CalculationPage,
   Login,
   NotFound,
   Verify,
@@ -35,14 +36,16 @@ function App() {
           path='/'
           element={
             <ProtectedRoute>
-              <Home />
+              <Navbar />
             </ProtectedRoute>
           }
         >
-          <Route index element={<IndexRouteElement />} />
-          <Route path='mdh' element={<MDH />} />
-          <Route path='horner' element={<Horner />} />
-          <Route path='agarwal' element={<Agarwal />} />
+          <Route path='calc' element={<CalculationPage />}>
+            <Route index element={<IndexRouteElement />} />
+            <Route path='mdh' element={<MDH />} />
+            <Route path='horner' element={<Horner />} />
+            <Route path='agarwal' element={<Agarwal />} />
+          </Route>
         </Route>
         <Route path='/login' element={<Login />} />
         <Route path='/forgot-password' element={<ForgotPassword />} />
