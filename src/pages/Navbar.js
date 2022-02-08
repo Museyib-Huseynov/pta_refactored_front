@@ -5,18 +5,30 @@ import { AiOutlineDownCircle, AiOutlineUpCircle } from 'react-icons/ai'
 import { useGlobalUserContext } from '../context/global_user_context'
 import { HiUserCircle } from 'react-icons/hi'
 import { IoMdLogOut } from 'react-icons/io'
+import axios from 'axios'
+import { useInputContext } from '../context/input_context'
 
 function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dropdownRef = useRef(null)
   const { user, logoutUser } = useGlobalUserContext()
+  const { ...state } = useInputContext()
 
   const handleDropdownOpen = () => {
-    setDropdownOpen(!dropdownOpen)
-    console.log(dropdownRef)
-    if (dropdownRef) {
-      dropdownRef.current.style.display = !dropdownOpen ? 'grid' : 'none'
-    }
+    setDropdownOpen(true)
+    dropdownRef.current.style.display = 'grid'
+  }
+  const handleDropdownClose = () => {
+    setDropdownOpen(false)
+    dropdownRef.current.style.display = 'none'
+  }
+
+  const save = async () => {
+    const well = await axios.post(
+      'http://localhost:5000/api/v1/well',
+      { ...state },
+      { withCredentials: true }
+    )
   }
 
   return (
@@ -29,15 +41,20 @@ function Navbar() {
             {dropdownOpen ? (
               <AiOutlineUpCircle
                 className='dropdown-icon'
-                onClick={handleDropdownOpen}
+                onMouseLeave={handleDropdownClose}
               />
             ) : (
               <AiOutlineDownCircle
                 className='dropdown-icon'
-                onClick={handleDropdownOpen}
+                onMouseEnter={handleDropdownOpen}
               />
             )}
-            <div className='dropdown-content' ref={dropdownRef}>
+            <div
+              className='dropdown-content'
+              ref={dropdownRef}
+              onMouseEnter={handleDropdownOpen}
+              onMouseLeave={handleDropdownClose}
+            >
               <a href='#' className='a'>
                 Well 1
               </a>
@@ -51,7 +68,9 @@ function Navbar() {
           </div>
         </div>
         <p className='new'>New well</p>
-        <p className='save'>Save</p>
+        <p className='save' onClick={save}>
+          Save
+        </p>
         <div className='user-info'>
           <HiUserCircle className='user-icon' />
           {user?.name}
@@ -83,7 +102,7 @@ const NavbarWrapper = styled.main`
     height: 60%;
     text-align: center;
     line-height: 3rem;
-    border-right: 5px solid #000;
+    border-right: 2px solid #fff;
     color: #fff;
     font-size: 1.5rem;
     letter-spacing: 3px;
@@ -127,7 +146,7 @@ const NavbarWrapper = styled.main`
   .dropdown-content {
     display: none;
     position: absolute;
-    top: 100%;
+    top: 85%;
     grid-template-columns: 90px;
     place-items: center;
     background: rgba(0, 0, 0, 0.8);
@@ -157,9 +176,10 @@ const NavbarWrapper = styled.main`
     font-weight: 700;
     font-size: 1.2rem;
     letter-spacing: 1px;
-    border-bottom: 1px solid #fff;
+    // border-bottom: 1px solid #fff;
     padding: 0.3rem;
     cursor: pointer;
+    user-select: none;
   }
 
   .new:hover {

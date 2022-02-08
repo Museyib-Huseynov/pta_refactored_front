@@ -33,14 +33,14 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route
-          path='/'
+          path='/calc'
           element={
             <ProtectedRoute>
               <Navbar />
             </ProtectedRoute>
           }
         >
-          <Route path='calc' element={<CalculationPage />}>
+          <Route path='' element={<CalculationPage />}>
             <Route index element={<IndexRouteElement />} />
             <Route path='mdh' element={<MDH />} />
             <Route path='horner' element={<Horner />} />

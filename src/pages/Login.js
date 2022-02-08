@@ -43,7 +43,7 @@ function Login() {
         setValues({ email: '', password: '' })
         setLoading(false)
         saveUser(data.user)
-        navigate('/')
+        navigate('/calc')
       } catch (error) {
         setAuthError(true)
         setLoading(false)
