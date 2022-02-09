@@ -33,7 +33,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route
-          path='/calc'
+          path='/'
           element={
             <ProtectedRoute>
               <Navbar />

@@ -9,12 +9,12 @@ const Input = () => {
 
   const handleImportData = (e) => {
     setImport(e)
-    navigate('/calc/mdh')
+    navigate('/mdh')
   }
 
   const handleLoadSampleData = () => {
     loadSampleData()
-    navigate('/calc/mdh')
+    navigate('/mdh')
   }
   return (
     <InputWrapper>

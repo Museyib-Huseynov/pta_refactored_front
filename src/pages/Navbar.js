@@ -10,9 +10,10 @@ import { useInputContext } from '../context/input_context'
 
 function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [wells, setWells] = useState([])
   const dropdownRef = useRef(null)
   const { user, logoutUser } = useGlobalUserContext()
-  const { ...state } = useInputContext()
+  const { loadWellData, ...state } = useInputContext()
 
   const handleDropdownOpen = () => {
     setDropdownOpen(true)
@@ -24,12 +25,39 @@ function Navbar() {
   }
 
   const save = async () => {
-    const well = await axios.post(
+    await axios.post(
       'http://localhost:5000/api/v1/well',
       { ...state },
       { withCredentials: true }
     )
   }
+
+  const fetchWells = async () => {
+    const { data } = await axios.get('http://localhost:5000/api/v1/well', {
+      withCredentials: true,
+    })
+
+    const newData = data.wells.map((item) => {
+      return { well: item.well, wellID: item._id }
+    })
+
+    setWells(newData)
+  }
+
+  const getSingleWell = async (wellID) => {
+    const { data } = await axios.get(
+      `http://localhost:5000/api/v1/well/${wellID}`,
+      {
+        withCredentials: true,
+      }
+    )
+    // loadWellData(data.well[0])
+    console.log(data.well[0].mdhRegression)
+  }
+
+  useEffect(() => {
+    fetchWells()
+  }, [])
 
   return (
     <NavbarWrapper>
@@ -55,15 +83,21 @@ function Navbar() {
               onMouseEnter={handleDropdownOpen}
               onMouseLeave={handleDropdownClose}
             >
-              <a href='#' className='a'>
-                Well 1
-              </a>
-              <a href='#' className='a'>
-                Well 2
-              </a>
-              <a href='#' className='a'>
-                Well 3
-              </a>
+              {wells.length > 0
+                ? wells.map((item, index) => {
+                    return (
+                      <p
+                        key={index}
+                        className='wellLinks'
+                        onClick={() => {
+                          getSingleWell(item.wellID)
+                        }}
+                      >
+                        {item.well}
+                      </p>
+                    )
+                  })
+                : null}
             </div>
           </div>
         </div>
@@ -154,7 +188,7 @@ const NavbarWrapper = styled.main`
     overflow: auto;
   }
 
-  .a {
+  .wellLinks {
     width: 100%;
     height: 40px;
     text-align: center;
@@ -166,7 +200,7 @@ const NavbarWrapper = styled.main`
     letter-spacing: 1px;
   }
 
-  .a:hover {
+  .wellLinks:hover {
     background: #ff7000;
   }
 

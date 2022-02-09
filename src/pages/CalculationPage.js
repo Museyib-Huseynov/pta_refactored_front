@@ -16,7 +16,7 @@ const CalculationPage = () => {
             <PressureTime />
             <nav className='links'>
               <NavLink
-                to='/calc/mdh'
+                to='/mdh'
                 className={({ isActive }) =>
                   isActive ? 'link active' : 'link'
                 }
@@ -24,7 +24,7 @@ const CalculationPage = () => {
                 MDH
               </NavLink>
               <NavLink
-                to='/calc/horner'
+                to='/horner'
                 className={({ isActive }) =>
                   isActive ? 'link active' : 'link'
                 }
@@ -32,7 +32,7 @@ const CalculationPage = () => {
                 Horner
               </NavLink>
               <NavLink
-                to='/calc/agarwal'
+                to='/agarwal'
                 className={({ isActive }) =>
                   isActive ? 'link active' : 'link'
                 }

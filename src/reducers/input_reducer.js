@@ -2,6 +2,7 @@ import {
   SET_INPUT,
   SET_IMPORT,
   LOAD_SAMPLE_DATA,
+  LOAD_WELL_DATA,
   SET_MDH_REGRESSION,
   SET_MDH_ANNOTATION,
   SET_HORNER_REGRESSION,
@@ -44,6 +45,11 @@ const input_reducer = (state, action) => {
         shapeFactor: 31.62,
         area: 40,
         importedData: sampleData,
+      }
+    case LOAD_WELL_DATA:
+      return {
+        // ...state,
+        ...action.payload,
       }
     case SET_MDH_REGRESSION:
       return {

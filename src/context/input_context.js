@@ -4,6 +4,7 @@ import {
   SET_INPUT,
   SET_IMPORT,
   LOAD_SAMPLE_DATA,
+  LOAD_WELL_DATA,
   SET_MDH_REGRESSION,
   SET_MDH_ANNOTATION,
   SET_HORNER_REGRESSION,
@@ -76,6 +77,10 @@ const InputProvider = ({ children }) => {
     dispatch({ type: LOAD_SAMPLE_DATA })
   }
 
+  const loadWellData = (data) => {
+    dispatch({ type: LOAD_WELL_DATA, payload: data })
+  }
+
   const setMDHRegression = (regression) => {
     dispatch({ type: SET_MDH_REGRESSION, payload: regression })
   }
@@ -135,6 +140,7 @@ const InputProvider = ({ children }) => {
         setInput,
         setImport,
         loadSampleData,
+        loadWellData,
         setMDHRegression,
         setMDHAnnotation,
         setHornerRegression,
