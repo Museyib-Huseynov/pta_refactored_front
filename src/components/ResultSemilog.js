@@ -3,6 +3,11 @@ import styled from 'styled-components'
 import { useInputContext } from '../context/input_context'
 
 function ResultSemilog({ type, regressionLine }) {
+  if (regressionLine) {
+    regressionLine.predict = (x) =>
+      regressionLine.equation[0] * x + regressionLine.equation[1]
+  }
+
   const {
     porosity,
     viscosity,
@@ -16,7 +21,6 @@ function ResultSemilog({ type, regressionLine }) {
     area,
     importedData,
   } = useInputContext()
-  console.log(typeof regressionLine)
   const allInputsFilled =
     porosity !== '' &&
     viscosity !== '' &&

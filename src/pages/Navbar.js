@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import styled from 'styled-components'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useNavigate } from 'react-router-dom'
 import { AiOutlineDownCircle, AiOutlineUpCircle } from 'react-icons/ai'
 import { useGlobalUserContext } from '../context/global_user_context'
 import { HiUserCircle } from 'react-icons/hi'
@@ -15,6 +15,8 @@ function Navbar() {
   const { user, logoutUser } = useGlobalUserContext()
   const { loadWellData, ...state } = useInputContext()
 
+  let navigate = useNavigate()
+
   const handleDropdownOpen = () => {
     setDropdownOpen(true)
     dropdownRef.current.style.display = 'grid'
@@ -25,11 +27,12 @@ function Navbar() {
   }
 
   const save = async () => {
-    await axios.post(
+    const { data } = await axios.post(
       'http://localhost:5000/api/v1/well',
       { ...state },
       { withCredentials: true }
     )
+    await fetchWells()
   }
 
   const fetchWells = async () => {
@@ -51,8 +54,8 @@ function Navbar() {
         withCredentials: true,
       }
     )
-    // loadWellData(data.well[0])
-    console.log(data.well[0].mdhRegression)
+    loadWellData(data.well[0])
+    navigate('/mdh')
   }
 
   useEffect(() => {
