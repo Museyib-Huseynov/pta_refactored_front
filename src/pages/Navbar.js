@@ -5,10 +5,12 @@ import { AiOutlineDownCircle, AiOutlineUpCircle } from 'react-icons/ai'
 import { useGlobalUserContext } from '../context/global_user_context'
 import { HiUserCircle } from 'react-icons/hi'
 import { IoMdLogOut } from 'react-icons/io'
+import { useInputContext, initialState } from '../context/input_context'
 import axios from 'axios'
-import { useInputContext } from '../context/input_context'
+import ReactLoading from 'react-loading'
 
 function Navbar() {
+  const [loading, setLoading] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [wells, setWells] = useState([])
   const dropdownRef = useRef(null)
@@ -26,13 +28,32 @@ function Navbar() {
     dropdownRef.current.style.display = 'none'
   }
 
+  const requiredFieldsEmpty =
+    state.field === '' ||
+    state.well === '' ||
+    state.porosity === '' ||
+    state.viscosity === '' ||
+    state.totalCompressibility === '' ||
+    state.wellRadius === '' ||
+    state.fvf === '' ||
+    state.effectiveThickness === '' ||
+    state.rate === '' ||
+    state.productionTime === '' ||
+    state.shapeFactor === '' ||
+    state.area === '' ||
+    state.importedData.length === 0
+
   const save = async () => {
-    const { data } = await axios.post(
-      'http://localhost:5000/api/v1/well',
-      { ...state },
-      { withCredentials: true }
-    )
-    await fetchWells()
+    if (!loading && !requiredFieldsEmpty) {
+      setLoading(true)
+      const { data } = await axios.post(
+        'http://localhost:5000/api/v1/well',
+        { ...state },
+        { withCredentials: true }
+      )
+      await fetchWells()
+      setLoading(false)
+    }
   }
 
   const fetchWells = async () => {
@@ -48,6 +69,7 @@ function Navbar() {
   }
 
   const getSingleWell = async (wellID) => {
+    setLoading(true)
     const { data } = await axios.get(
       `http://localhost:5000/api/v1/well/${wellID}`,
       {
@@ -55,6 +77,7 @@ function Navbar() {
       }
     )
     loadWellData(data.well[0])
+    setLoading(false)
     navigate('/mdh')
   }
 
@@ -104,20 +127,48 @@ function Navbar() {
             </div>
           </div>
         </div>
-        <p className='new'>New well</p>
-        <p className='save' onClick={save}>
-          Save
+        <p
+          className='new'
+          onClick={() => {
+            setLoading(true)
+            loadWellData(initialState)
+            setTimeout(() => setLoading(false), 1000)
+          }}
+        >
+          New well
         </p>
+        <button className='save' onClick={save}>
+          {loading ? (
+            <ReactLoading type='spokes' color='#fff' height={20} width={20} />
+          ) : (
+            'Save'
+          )}
+        </button>
         <div className='user-info'>
           <HiUserCircle className='user-icon' />
           {user?.name}
         </div>
-        <div className='logout' onClick={logoutUser}>
+        <div
+          className='logout'
+          onClick={() => {
+            setLoading(true)
+            setTimeout(() => {
+              setLoading(false)
+              logoutUser()
+            }, 1000)
+          }}
+        >
           <IoMdLogOut className='logout-icon' />
           Logout
         </div>
       </nav>
-      <Outlet />
+      {loading ? (
+        <div className='loading'>
+          <ReactLoading type='bars' color='#000' height={100} width={100} />
+        </div>
+      ) : (
+        <Outlet />
+      )}
     </NavbarWrapper>
   )
 }
@@ -209,11 +260,12 @@ const NavbarWrapper = styled.main`
 
   .new,
   .save {
+    display: grid;
+    place-items: center;
     color: #fff;
     font-weight: 700;
     font-size: 1.2rem;
     letter-spacing: 1px;
-    // border-bottom: 1px solid #fff;
     padding: 0.3rem;
     cursor: pointer;
     user-select: none;
@@ -255,6 +307,13 @@ const NavbarWrapper = styled.main`
   .logout-icon {
     font-size: 3rem;
     fill: rgba(0, 0, 0, 0.5);
+  }
+
+  .loading {
+    height: calc(100vh - 5rem);
+    width: 100vw;
+    display: grid;
+    place-content: center;
   }
 `
 

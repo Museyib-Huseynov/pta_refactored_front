@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { FaUser, FaLock } from 'react-icons/fa'
 import { MdEmail } from 'react-icons/md'
 import { AiOutlineUser } from 'react-icons/ai'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Navigate } from 'react-router-dom'
 import axios from 'axios'
 import { useGlobalUserContext } from '../context/global_user_context'
 import ReactLoading from 'react-loading'
@@ -18,7 +18,7 @@ function Login() {
   const [loading, setLoading] = useState(false)
   const [authError, setAuthError] = useState(false)
   const [afterRegister, setAfterRegister] = useState(false)
-  const { saveUser } = useGlobalUserContext()
+  const { user, saveUser } = useGlobalUserContext()
 
   const navigate = useNavigate()
 
@@ -43,7 +43,7 @@ function Login() {
         setValues({ email: '', password: '' })
         setLoading(false)
         saveUser(data.user)
-        navigate('/')
+        navigate('/mdh')
       } catch (error) {
         setAuthError(true)
         setLoading(false)
@@ -66,6 +66,11 @@ function Login() {
   }
 
   const toggleLoginRegister = () => setLogin(!login)
+
+  console.log(user)
+  if (user) {
+    return <Navigate to='/mdh' replace={true} />
+  }
 
   if (loading) {
     return (

@@ -3,10 +3,10 @@ import styled from 'styled-components'
 import { useInputContext } from '../context/input_context'
 
 function ResultSemilog({ type, regressionLine }) {
-  if (regressionLine) {
-    regressionLine.predict = (x) =>
-      regressionLine.equation[0] * x + regressionLine.equation[1]
-  }
+  // if (regressionLine) {
+  //   regressionLine.predict = (x) =>
+  //     regressionLine.equation[0] * x + regressionLine.equation[1]
+  // }
 
   const {
     porosity,

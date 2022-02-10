@@ -165,4 +165,4 @@ const useInputContext = () => {
   return useContext(InputContext)
 }
 
-export { InputProvider, useInputContext }
+export { InputProvider, useInputContext, initialState }
