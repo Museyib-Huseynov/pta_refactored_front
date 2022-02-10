@@ -1,9 +1,11 @@
-import { useInputContext } from '../context/input_context'
-import styled from 'styled-components'
 import React from 'react'
+import styled from 'styled-components'
+import { useInputContext } from '../context/input_context'
+import { useGlobalContext } from '../context/global_context'
 
 const InputElement = ({ type, label, marginTop }) => {
   const { setInput, ...state } = useInputContext()
+  const { fieldsEmpty } = useGlobalContext()
   return (
     <InputElementWrapper marginTop={marginTop}>
       <label htmlFor={type}>
@@ -19,6 +21,7 @@ const InputElement = ({ type, label, marginTop }) => {
         name={type}
         value={state[type]}
         onChange={setInput}
+        className={fieldsEmpty && state[type] === '' ? 'warning' : ''}
       />
     </InputElementWrapper>
   )
@@ -54,6 +57,10 @@ const InputElementWrapper = styled.div`
   /* Firefox */
   input[type='number'] {
     -moz-appearance: textfield;
+  }
+
+  .warning {
+    border: 2px solid red;
   }
 `
 

@@ -1,10 +1,12 @@
 import styled from 'styled-components'
-import { useInputContext } from '../context/input_context'
 import { InputElement } from '.'
 import { useNavigate } from 'react-router-dom'
+import { useInputContext } from '../context/input_context'
+import { useGlobalContext } from '../context/global_context'
 
 const Input = () => {
-  const { setImport, loadSampleData } = useInputContext()
+  const { setImport, loadSampleData, importedData } = useInputContext()
+  const { fieldsEmpty } = useGlobalContext()
   const navigate = useNavigate()
 
   const handleImportData = (e) => {
@@ -37,7 +39,12 @@ const Input = () => {
         label={['Shape Factor (C', <sub>A</sub>, ')']}
       />
       <InputElement type='area' label='Area (acres)' />
-      <label htmlFor='file' className='file'>
+      <label
+        htmlFor='file'
+        className={
+          fieldsEmpty && importedData.length === 0 ? 'file warningg' : 'file'
+        }
+      >
         Import Pressure data
       </label>
       <input
@@ -86,6 +93,10 @@ const InputWrapper = styled.form`
     color: #000;
     font-weight: 600;
     // border: none;
+  }
+
+  .warningg {
+    border: 4px solid red;
   }
 `
 

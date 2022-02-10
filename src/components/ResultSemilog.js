@@ -3,10 +3,12 @@ import styled from 'styled-components'
 import { useInputContext } from '../context/input_context'
 
 function ResultSemilog({ type, regressionLine }) {
-  // if (regressionLine) {
-  //   regressionLine.predict = (x) =>
-  //     regressionLine.equation[0] * x + regressionLine.equation[1]
-  // }
+  // when pushing database mongoose does not add regressionline predict function, so  we define manually
+  if (regressionLine) {
+    regressionLine.predict = (x) => {
+      return [x, regressionLine.equation[0] * x + regressionLine.equation[1]]
+    }
+  }
 
   const {
     porosity,

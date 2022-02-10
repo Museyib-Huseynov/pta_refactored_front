@@ -2,10 +2,11 @@ import { useState, useRef, useEffect } from 'react'
 import styled from 'styled-components'
 import { Outlet, useNavigate } from 'react-router-dom'
 import { AiOutlineDownCircle, AiOutlineUpCircle } from 'react-icons/ai'
-import { useGlobalUserContext } from '../context/global_user_context'
 import { HiUserCircle } from 'react-icons/hi'
 import { IoMdLogOut } from 'react-icons/io'
+import { useGlobalUserContext } from '../context/global_user_context'
 import { useInputContext, initialState } from '../context/input_context'
+import { useGlobalContext } from '../context/global_context'
 import axios from 'axios'
 import ReactLoading from 'react-loading'
 
@@ -16,6 +17,7 @@ function Navbar() {
   const dropdownRef = useRef(null)
   const { user, logoutUser } = useGlobalUserContext()
   const { loadWellData, ...state } = useInputContext()
+  const { fieldsEmpty, setFieldsEmpty } = useGlobalContext()
 
   let navigate = useNavigate()
 
@@ -45,6 +47,7 @@ function Navbar() {
 
   const save = async () => {
     if (!loading && !requiredFieldsEmpty) {
+      setFieldsEmpty(false)
       setLoading(true)
       const { data } = await axios.post(
         'http://localhost:5000/api/v1/well',
@@ -53,6 +56,8 @@ function Navbar() {
       )
       await fetchWells()
       setLoading(false)
+    } else {
+      setFieldsEmpty(true)
     }
   }
 
@@ -130,6 +135,7 @@ function Navbar() {
         <p
           className='new'
           onClick={() => {
+            setFieldsEmpty(false)
             setLoading(true)
             loadWellData(initialState)
             setTimeout(() => setLoading(false), 1000)
