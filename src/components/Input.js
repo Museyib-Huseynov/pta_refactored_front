@@ -20,7 +20,7 @@ const Input = () => {
   }
   return (
     <InputWrapper>
-      <InputElement type='field' label='Field name' marginTop />
+      <InputElement type='field' label='Field name (shortcut)' marginTop />
       <InputElement type='well' label='Well number' />
       <h1>Input data</h1>
       <InputElement type='porosity' label='Porosity (%)' />

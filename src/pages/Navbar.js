@@ -67,7 +67,7 @@ function Navbar() {
     })
 
     const newData = data.wells.map((item) => {
-      return { well: item.well, wellID: item._id }
+      return { well: item.well, wellID: item._id, field: item.field }
     })
 
     setWells(newData)
@@ -124,7 +124,7 @@ function Navbar() {
                           getSingleWell(item.wellID)
                         }}
                       >
-                        {item.well}
+                        {item.field} - {item.well}
                       </p>
                     )
                   })
@@ -241,15 +241,15 @@ const NavbarWrapper = styled.main`
     display: none;
     position: absolute;
     top: 85%;
-    grid-template-columns: 90px;
-    place-items: center;
+    grid-template-columns: 100px;
     background: rgba(0, 0, 0, 0.8);
     border-radius: 10px;
-    overflow: auto;
+    height: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 
   .wellLinks {
-    width: 100%;
     height: 40px;
     text-align: center;
     line-height: 40px;

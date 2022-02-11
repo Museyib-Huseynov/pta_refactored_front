@@ -61,6 +61,7 @@ function MDH() {
               size: 16,
               weight: 'bold',
             },
+            color: '#000',
           },
           tooltip: {
             // enabled: false,

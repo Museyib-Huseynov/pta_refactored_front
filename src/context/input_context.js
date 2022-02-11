@@ -59,7 +59,7 @@ const InputProvider = ({ children }) => {
     const name = e.target.name
     let value = e.target.value
     if (name === 'field') {
-      value = value.toUpperCase()
+      value = value.toUpperCase().slice(0, 3)
     }
     if (name === 'porosity' && (value < 0 || value > 100)) {
       value = 0

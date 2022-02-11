@@ -50,7 +50,7 @@ const CalculationPage = () => {
 }
 
 const CalculationPageWrapper = styled.div`
-  height: 100vh;
+  height: calc(100vh - 5rem);
   display: grid;
   grid-template-columns: 350px 600px 700px;
   column-gap: 2rem;
