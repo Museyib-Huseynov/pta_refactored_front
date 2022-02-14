@@ -244,7 +244,7 @@ const NavbarWrapper = styled.main`
     grid-template-columns: 100px;
     background: rgba(0, 0, 0, 0.8);
     border-radius: 10px;
-    height: 400px;
+    max-height: 400px;
     overflow-y: auto;
     overflow-x: hidden;
   }
