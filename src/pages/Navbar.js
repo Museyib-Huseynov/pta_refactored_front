@@ -188,6 +188,7 @@ const NavbarWrapper = styled.main`
       rgba(0, 0, 0, 0.23) 0px 6px 6px;
     display: grid;
     grid-template-columns: 300px repeat(3, 200px) auto 250px;
+    grid-template-rows: repeat(6, 5rem);
     place-items: center;
   }
 
